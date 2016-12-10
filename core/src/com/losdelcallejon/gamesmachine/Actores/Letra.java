@@ -23,8 +23,9 @@ public class Letra extends Actor {
     private Fixture fixture;
 
     private static float velocidadBajada;
-    ControlVirtual tecladoVirtual;
-    public Letra(World world, Texture texture, Vector2 position,ControlVirtual tecladoVirtual)
+    com.losdelcallejon.gamesmachine.InputControllers.ControlVirtual tecladoVirtual;
+
+    public Letra(World world, Texture texture, Vector2 position, com.losdelcallejon.gamesmachine.InputControllers.ControlVirtual tecladoVirtual)
     {
         this.world=world;
         this.texture=texture;
@@ -46,7 +47,7 @@ public class Letra extends Actor {
 
     private float generarVelocidadBajada() {
         Random r = new Random();
-        int t = r.nextInt(28 - 22) + 22;
+        int t = r.nextInt(22 - 15) + 15;
         return t;
     }
 

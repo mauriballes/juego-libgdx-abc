@@ -1,4 +1,4 @@
-package com.losdelcallejon.gamesmachine.Actores;
+package com.losdelcallejon.gamesmachine.InputControllers;
 
 /**
  * Created by HP on 10/12/2016.

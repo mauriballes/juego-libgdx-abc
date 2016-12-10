@@ -4,16 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
-import com.losdelcallejon.gamesmachine.Actores.ControlVirtual;
+import com.losdelcallejon.gamesmachine.InputControllers.ControlVirtual;
 import com.losdelcallejon.gamesmachine.Actores.Letra;
-import com.losdelcallejon.gamesmachine.Actores.ProcesadorEntrada;
+import com.losdelcallejon.gamesmachine.InputControllers.ProcesadorEntrada;
 import com.losdelcallejon.gamesmachine.Constants;
 
 import java.util.ArrayList;
@@ -26,7 +23,7 @@ import java.util.Random;
 public class GameScreen extends BaseScreen {
     public static int nivel;
     public static boolean isMultiplayer;
-    HashMap<Integer,String> Abecedario;
+    HashMap<String,String> Abecedario;
     private String palabra;
     private ArrayList<Letra> letraList;
 
@@ -41,10 +38,10 @@ public class GameScreen extends BaseScreen {
         // OBTENER LA PRIMER PALABRA DEL NIVEL DADO Y ESPERAR LA RESPUESTA DEL SERVIDOR
         //Object parametros=new Object();
         //game.socket.emit(Constants.GET_PALABRA_NIVEL,parametros);
-        palabra="OK";
+        palabra="SAMUEL";
 
         stage=new Stage(new FitViewport(640,360));
-        world=new World(new Vector2(0,-10),true);
+        world=new World(new Vector2(0,-15),true);
 
     }
 
@@ -59,7 +56,8 @@ public class GameScreen extends BaseScreen {
         letraList=new ArrayList<Letra>();
         for(int i=0;i<palabra.length();i++)
         {
-            Texture letraTextura=game.getManager().get("player.png");
+            char c=palabra.charAt(i);
+            Texture letraTextura=game.getManager().get(this.Abecedario.get(String.valueOf(c)));
             ControlVirtual controlVirtual=new ControlVirtual();
             Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),generarY()),controlVirtual);
             ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);

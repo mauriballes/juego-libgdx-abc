@@ -51,9 +51,43 @@ public class AbcGameMain extends Game {
 		manager=new AssetManager();
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
-		manager.load("player.png", Texture.class);
+		cargarRecursos();
+
 		loadingScreen=new LoadingScreen(this);
 		setScreen(loadingScreen);
+	}
+
+	private void cargarRecursos() {
+		manager.load("player.png", Texture.class);
+		manager.load("abc/A.png",Texture.class);
+		manager.load("abc/B.png",Texture.class);
+		manager.load("abc/C.png",Texture.class);
+		manager.load("abc/D.png",Texture.class);
+		manager.load("abc/E.png",Texture.class);
+		manager.load("abc/F.png",Texture.class);
+		manager.load("abc/G.png",Texture.class);
+		manager.load("abc/H.png",Texture.class);
+		manager.load("abc/I.png",Texture.class);
+		manager.load("abc/J.png",Texture.class);
+		manager.load("abc/K.png",Texture.class);
+		manager.load("abc/L.png",Texture.class);
+		manager.load("abc/M.png",Texture.class);
+		manager.load("abc/N.png",Texture.class);
+		manager.load("abc/Ñ.png",Texture.class);
+		manager.load("abc/O.png",Texture.class);
+		manager.load("abc/P.png",Texture.class);
+		manager.load("abc/Q.png",Texture.class);
+		manager.load("abc/R.png",Texture.class);
+		manager.load("abc/S.png",Texture.class);
+		manager.load("abc/T.png",Texture.class);
+		manager.load("abc/U.png",Texture.class);
+		manager.load("abc/V.png",Texture.class);
+		manager.load("abc/W.png",Texture.class);
+		manager.load("abc/X.png",Texture.class);
+		manager.load("abc/Y.png",Texture.class);
+		manager.load("abc/Z.png",Texture.class);
+
+
 	}
 
 	public void goToLogin() {
