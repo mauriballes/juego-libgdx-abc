@@ -30,7 +30,7 @@ public class AbcController {
         this.world = world;
         this.assetManager=assetManager;
     }
-
+//<editor-fold desc="Setters y getters">
     public HashMap<String, String> getAbecedario() {
         return Abecedario;
     }
@@ -70,9 +70,9 @@ public class AbcController {
     public void setWorld(World world) {
         this.world = world;
     }
+//</editor-fold>
 
     public void generarLetras() {
-        letraList=new ArrayList<Letra>();
         for(int i=0;i<palabra.length();i++)
         {
             char c=palabra.charAt(i);
@@ -99,4 +99,24 @@ public class AbcController {
     }
 
 
+    public void pintar(float delta)
+    {
+        stage.act();
+        world.step(delta,6,2);
+        stage.draw();
+    }
+    public void hide()
+    {
+        stage.clear();
+        for(Letra letrita: letraList)
+        {
+            letrita.detach();
+        }
+    }
+
+    public void dispose()
+    {
+        stage.dispose();
+        world.dispose();
+    }
 }

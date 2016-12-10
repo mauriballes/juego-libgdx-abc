@@ -45,6 +45,7 @@ public class GameScreen extends BaseScreen {
         palabra="SAMUEL";
         this.stage=new Stage(new FitViewport(640,360));
         this.world=new World(new Vector2(0,-12),true);
+        this.letraList=new ArrayList<Letra>();
         abcController=new AbcController(Abecedario,palabra,letraList,stage,world,game.getManager());
 
     }
@@ -61,26 +62,18 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        stage.act();
-        world.step(delta,6,2);
-        stage.draw();
+        abcController.pintar(delta);
     }
 
 
     @Override
     public void hide() {
-        stage.clear();
-        for(Letra letrita: letraList)
-        {
-            letrita.detach();
-        }
+        abcController.hide();
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
-        world.dispose();
+        abcController.dispose();
     }
 
     @Override
