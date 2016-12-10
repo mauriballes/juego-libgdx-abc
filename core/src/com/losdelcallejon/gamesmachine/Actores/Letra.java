@@ -23,8 +23,8 @@ public class Letra extends Actor {
     private Fixture fixture;
 
     private static float velocidadBajada;
-
-    public Letra(World world, Texture texture, Vector2 position)
+    ControlVirtual tecladoVirtual;
+    public Letra(World world, Texture texture, Vector2 position,ControlVirtual tecladoVirtual)
     {
         this.world=world;
         this.texture=texture;
@@ -40,8 +40,8 @@ public class Letra extends Actor {
         fixture.setUserData("Letra");
         letraShape.dispose();
         setSize(Constants.PIXELS_IN_METER*1,Constants.PIXELS_IN_METER*1);
-
         velocidadBajada=generarVelocidadBajada()*1.19f;
+        this.tecladoVirtual=tecladoVirtual;
     }
 
     private float generarVelocidadBajada() {
@@ -53,14 +53,17 @@ public class Letra extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        setPosition((body.getPosition().x-0.5f)*Constants.PIXELS_IN_METER,
-                (body.getPosition().y-0.5f)*Constants.PIXELS_IN_METER);
-        batch.draw(texture,getX(),getY(),getWidth(),getHeight());
+        if(!tecladoVirtual.esTocado){
+            setPosition((body.getPosition().x-0.5f)*Constants.PIXELS_IN_METER,
+                    (body.getPosition().y-0.5f)*Constants.PIXELS_IN_METER);
+            batch.draw(texture,getX(),getY(),getWidth(),getHeight());
+        }
     }
 
     @Override
     public void act(float delta) {
-            body.applyForceToCenter(0,velocidadBajada,true);
+
+        body.applyForceToCenter(0,velocidadBajada,true);
     }
 
     public void detach()

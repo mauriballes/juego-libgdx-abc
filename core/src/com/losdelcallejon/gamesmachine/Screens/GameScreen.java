@@ -6,11 +6,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
+import com.losdelcallejon.gamesmachine.Actores.ControlVirtual;
 import com.losdelcallejon.gamesmachine.Actores.Letra;
+import com.losdelcallejon.gamesmachine.Actores.ProcesadorEntrada;
 import com.losdelcallejon.gamesmachine.Constants;
 
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class GameScreen extends BaseScreen {
         // OBTENER LA PRIMER PALABRA DEL NIVEL DADO Y ESPERAR LA RESPUESTA DEL SERVIDOR
         //Object parametros=new Object();
         //game.socket.emit(Constants.GET_PALABRA_NIVEL,parametros);
-        palabra="HOLA";
+        palabra="OK";
 
         stage=new Stage(new FitViewport(640,360));
         world=new World(new Vector2(0,-10),true);
@@ -49,6 +52,7 @@ public class GameScreen extends BaseScreen {
     public void show() {
 
         generarLetras();
+        Gdx.input.setInputProcessor(stage);
     }
 
     private void generarLetras() {
@@ -56,7 +60,10 @@ public class GameScreen extends BaseScreen {
         for(int i=0;i<palabra.length();i++)
         {
             Texture letraTextura=game.getManager().get("player.png");
-            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),generarY()));
+            ControlVirtual controlVirtual=new ControlVirtual();
+            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),generarY()),controlVirtual);
+            ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);
+            letrita.addCaptureListener(procesadorEntrada);
             this.letraList.add(letrita);
             stage.addActor(letrita);
         }
@@ -64,13 +71,13 @@ public class GameScreen extends BaseScreen {
 
     private float generarY() {
         Random r = new Random();
-        int t = r.nextInt(10 - 5) + 5;
+        int t = r.nextInt(6 - 5) + 5;
         return t;
     }
 
     private float generarX() {
         Random r = new Random();
-        int t = r.nextInt(8 - 1) + 1;
+        int t = r.nextInt(6 - 2) + 2;
         return t;
     }
 

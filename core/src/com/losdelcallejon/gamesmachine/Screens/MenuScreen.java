@@ -9,7 +9,7 @@ public class MenuScreen extends BaseScreen {
 
     /*
     *                           LEEME
-    *   TODO AQUI APARECERAN LAS DISTINTAS CATEGORIAS Y EL CABRON PODRA ELEGIR QUE JUGAR Y SI JUEGA SOLO O MULTIUSUARIO
+    *   TODO AQUI APARECERAN LAS DISTINTAS NIVELES Y EL CABRON PODRA ELEGIR QUE JUGAR Y SI JUEGA SOLO O MULTIUSUARIO
     *
     * */
     public MenuScreen(AbcGameMain g) {

@@ -19,7 +19,7 @@ public class LoginScreen extends BaseScreen {
     public LoginScreen(AbcGameMain g) {
         super(g);
         //EJEMPLO DE COMO REGISTRAR EVENTOS
-        //game.socket.on(Constants.EJEMPLO_EVENTO,this);
+         //game.socket.on(Constants.EJEMPLO_EVENTO,this);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class LoginScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         // EJEMPLO DE COMO MANDAR UN EJEMPLO AL SERVIDOR
-        //game.socket.emit(Constants.EJEMPLO_EVENTO,Object);
+       // game.socket.emit(Constants.EJEMPLO_EVENTO,Object);
     }
 
     @Override
@@ -42,6 +42,7 @@ public class LoginScreen extends BaseScreen {
 
     @Override
     public void call(Object... args) {
+
         // UI SE CAPTURAN LOS EVENTOS Y CON PUROS IF EJECUTAMOS DISTINTAS ACCIONES TENEMOS QUE PONERNOS DE ACUERDO CON MAURICIO
     }
 }
