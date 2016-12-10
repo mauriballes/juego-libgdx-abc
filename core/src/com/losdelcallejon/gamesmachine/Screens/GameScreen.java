@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
+import com.losdelcallejon.gamesmachine.InputControllers.AbcController;
 import com.losdelcallejon.gamesmachine.InputControllers.ControlVirtual;
 import com.losdelcallejon.gamesmachine.Actores.Letra;
 import com.losdelcallejon.gamesmachine.InputControllers.ProcesadorEntrada;
@@ -27,8 +28,11 @@ public class GameScreen extends BaseScreen {
     private String palabra;
     private ArrayList<Letra> letraList;
 
+
+
     private Stage stage;
     private World world;
+    private AbcController abcController;
 
     public GameScreen(AbcGameMain g,int nivel,boolean isMultiPlayer) {
         super(g);
@@ -39,45 +43,19 @@ public class GameScreen extends BaseScreen {
         //Object parametros=new Object();
         //game.socket.emit(Constants.GET_PALABRA_NIVEL,parametros);
         palabra="SAMUEL";
-
-        stage=new Stage(new FitViewport(640,360));
-        world=new World(new Vector2(0,-15),true);
+        this.stage=new Stage(new FitViewport(640,360));
+        this.world=new World(new Vector2(0,-12),true);
+        abcController=new AbcController(Abecedario,palabra,letraList,stage,world,game.getManager());
 
     }
 
     @Override
     public void show() {
 
-        generarLetras();
+        abcController.generarLetras();
         Gdx.input.setInputProcessor(stage);
     }
 
-    private void generarLetras() {
-        letraList=new ArrayList<Letra>();
-        for(int i=0;i<palabra.length();i++)
-        {
-            char c=palabra.charAt(i);
-            Texture letraTextura=game.getManager().get(this.Abecedario.get(String.valueOf(c)));
-            ControlVirtual controlVirtual=new ControlVirtual();
-            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),generarY()),controlVirtual);
-            ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);
-            letrita.addCaptureListener(procesadorEntrada);
-            this.letraList.add(letrita);
-            stage.addActor(letrita);
-        }
-    }
-
-    private float generarY() {
-        Random r = new Random();
-        int t = r.nextInt(6 - 5) + 5;
-        return t;
-    }
-
-    private float generarX() {
-        Random r = new Random();
-        int t = r.nextInt(6 - 2) + 2;
-        return t;
-    }
 
     @Override
     public void render(float delta) {

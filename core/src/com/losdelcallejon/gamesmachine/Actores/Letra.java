@@ -40,7 +40,7 @@ public class Letra extends Actor {
         fixture= body.createFixture(letraShape,3);
         fixture.setUserData("Letra");
         letraShape.dispose();
-        setSize(Constants.PIXELS_IN_METER*1,Constants.PIXELS_IN_METER*1);
+        setSize(Constants.PIXELS_IN_METER*0.5F,Constants.PIXELS_IN_METER*0.5F);
         velocidadBajada=generarVelocidadBajada()*1.19f;
         this.tecladoVirtual=tecladoVirtual;
     }
