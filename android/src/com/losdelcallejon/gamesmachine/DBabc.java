@@ -140,4 +140,22 @@ public class DBabc extends SQLiteOpenHelper {
         }
         return -1;
     }
+
+    public int obtenerUsuarioID() {
+        int s=-1;
+        Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        return s;
+    }
+
+    public String obtenerSexoUsuario() {
+        String s = "";
+        Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
+        if (c.moveToFirst()) {
+            return c.getString(2);
+        }
+        return null;
+    }
 }
