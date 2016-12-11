@@ -1,8 +1,5 @@
-package com.losdelcallejon.gamesmachine.Actores;
+package com.losdelcallejon.gamesmachine.InputControllers;
 
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 
@@ -19,8 +16,7 @@ public class ProcesadorEntrada extends InputListener {
 
     @Override
     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        int xd=0;
-        xd++;
+
         controlVirtual.esTocado=true;
         return true;
     }

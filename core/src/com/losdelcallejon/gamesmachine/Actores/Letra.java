@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.losdelcallejon.gamesmachine.Constants;
+import com.losdelcallejon.gamesmachine.InputControllers.ControlVirtual;
 
 import java.util.Random;
 
@@ -23,8 +24,9 @@ public class Letra extends Actor {
     private Fixture fixture;
 
     private static float velocidadBajada;
-    ControlVirtual tecladoVirtual;
-    public Letra(World world, Texture texture, Vector2 position,ControlVirtual tecladoVirtual)
+    public ControlVirtual tecladoVirtual;
+
+    public Letra(World world, Texture texture, Vector2 position, ControlVirtual tecladoVirtual)
     {
         this.world=world;
         this.texture=texture;
@@ -39,25 +41,23 @@ public class Letra extends Actor {
         fixture= body.createFixture(letraShape,3);
         fixture.setUserData("Letra");
         letraShape.dispose();
-        setSize(Constants.PIXELS_IN_METER*1,Constants.PIXELS_IN_METER*1);
-        velocidadBajada=generarVelocidadBajada()*1.19f;
+        setSize(Constants.PIXELS_IN_METER*0.5F,Constants.PIXELS_IN_METER*0.5F);
+        velocidadBajada=generarVelocidadBajada()*1.07f;
         this.tecladoVirtual=tecladoVirtual;
     }
 
     private float generarVelocidadBajada() {
         Random r = new Random();
-        int t = r.nextInt(28 - 22) + 22;
+        int t = r.nextInt(21 - 16) + 16;
         return t;
     }
 
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if(!tecladoVirtual.esTocado){
             setPosition((body.getPosition().x-0.5f)*Constants.PIXELS_IN_METER,
                     (body.getPosition().y-0.5f)*Constants.PIXELS_IN_METER);
             batch.draw(texture,getX(),getY(),getWidth(),getHeight());
-        }
     }
 
     @Override
@@ -68,8 +68,17 @@ public class Letra extends Actor {
 
     public void detach()
     {
+
         body.destroyFixture(fixture);
         world.destroyBody(body);
+    }
+
+    public boolean pasoLaPantalla() {
+        return (getY()+getHeight())<0;
+    }
+
+    public boolean haSidoPulsada() {
+        return tecladoVirtual.esTocado;
     }
 }
 

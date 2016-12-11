@@ -21,38 +21,97 @@ public class Constants {
 
 
     public static final int PIXELS_IN_METER=90;
-
-
-    public static HashMap<Integer,String> OBTENER_ABECEDARIO()
+    public static String toString(int letra)
     {
-        HashMap<Integer,String> abecedario=new HashMap<Integer, String>();
-        abecedario.put(0,"A");
-        abecedario.put(1,"B");
-        abecedario.put(2,"C");
-        abecedario.put(3,"D");
-        abecedario.put(4,"E");
-        abecedario.put(5,"F");
-        abecedario.put(6,"G");
-        abecedario.put(7,"H");
-        abecedario.put(8,"I");
-        abecedario.put(9,"J");
-        abecedario.put(10,"K");
-        abecedario.put(11,"L");
-        abecedario.put(12,"M");
-        abecedario.put(13,"N");
-        abecedario.put(14,"Ñ");
-        abecedario.put(15,"O");
-        abecedario.put(16,"P");
-        abecedario.put(17,"Q");
-        abecedario.put(18,"R");
-        abecedario.put(19,"S");
-        abecedario.put(20,"T");
-        abecedario.put(21,"U");
-        abecedario.put(22,"V");
-        abecedario.put(23,"W");
-        abecedario.put(24,"X");
-        abecedario.put(25,"Y");
-        abecedario.put(26,"Z");
+        switch (letra)
+        {
+            case 0:
+                return "A";
+            case 1:
+                return "B";
+            case 2:
+                return "C";
+            case 3:
+                return "D";
+            case 4:
+                return "E";
+            case 5:
+                return "F";
+            case 6:
+                return "G";
+            case 7:
+                return "H";
+            case 8:
+                return "I";
+            case 9:
+                return "J";
+            case 10:
+                return "K";
+            case 11:
+                return "L";
+            case 12:
+                return "M";
+            case 13:
+                return "N";
+            case 14:
+                return "Ñ";
+            case 15:
+                return "O";
+            case 16:
+                return "P";
+            case 17:
+                return "Q";
+            case 18:
+                return "R";
+            case 19:
+                return "S";
+            case 20:
+                return "T";
+            case 21:
+                return "U";
+            case 22:
+                return "V";
+            case 23:
+                return "W";
+            case 24:
+                return "X";
+            case 25:
+                return "Y";
+            case 26:
+                return "Z";
+        }
+        return "A";
+    }
+    public static HashMap<String,String> OBTENER_ABECEDARIO()
+    {
+        HashMap<String,String> abecedario=new HashMap<String,String>();
+        abecedario.put("A","abc/A.png");
+        abecedario.put("B","abc/B.png");
+        abecedario.put("C","abc/C.png");
+        abecedario.put("D","abc/D.png");
+        abecedario.put("E","abc/E.png");
+        abecedario.put("F","abc/F.png");
+        abecedario.put("G","abc/G.png");
+        abecedario.put("H","abc/H.png");
+        abecedario.put("I","abc/I.png");
+        abecedario.put("J","abc/J.png");
+        abecedario.put("K","abc/K.png");
+        abecedario.put("L","abc/L.png");
+        abecedario.put("M","abc/M.png");
+        abecedario.put("N","abc/N.png");
+        abecedario.put("Ñ","abc/Ñ.png");
+        abecedario.put("O","abc/O.png");
+        abecedario.put("P","abc/P.png");
+        abecedario.put("Q","abc/Q.png");
+        abecedario.put("R","abc/R.png");
+        abecedario.put("S","abc/S.png");
+        abecedario.put("T","abc/T.png");
+        abecedario.put("U","abc/U.png");
+        abecedario.put("V","abc/V.png");
+        abecedario.put("W","abc/W.png");
+        abecedario.put("X","abc/X.png");
+        abecedario.put("Y","abc/Y.png");
+        abecedario.put("Z","abc/Z.png");
         return abecedario;
     }
 
