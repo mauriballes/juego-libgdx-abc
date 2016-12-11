@@ -1,6 +1,7 @@
 package com.losdelcallejon.gamesmachine.InputControllers;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -27,16 +28,22 @@ public class AbcController {
     private AssetManager assetManager;
     private String miPuntaje;
     private int elQueToca;
+    private ArrayList<String> palabras;
+    private int laPalabraQueToca;
 
-    public AbcController(HashMap<String, String> abecedario, String palabra, ArrayList<Letra> letraList, Stage stage, World world, AssetManager assetManager) {
+    private Sound touchSound;
+    public AbcController(HashMap<String, String> abecedario, String palabra, ArrayList<Letra> letraList, Stage stage, World world, AssetManager assetManager,ArrayList<String> palabras) {
         Abecedario = abecedario;
         this.palabra = palabra;
         this.letraList = letraList;
         this.stage = stage;
         this.world = world;
         this.assetManager=assetManager;
+        this.palabras=palabras;
         miPuntaje="";
         elQueToca=0;
+        laPalabraQueToca=0;
+        touchSound=assetManager.get("audio/jump.ogg");
     }
 //<editor-fold desc="Setters y getters">
     public HashMap<String, String> getAbecedario() {
@@ -161,6 +168,7 @@ public class AbcController {
             {
                 if(haSidoPulsada)
                 {
+                    touchSound.play();
                     if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
                     {
                         miPuntaje+=letrita.tecladoVirtual.letra;
@@ -212,5 +220,49 @@ public class AbcController {
         {
             letraList.remove(letrita);
         }
+    }
+
+    public void validarCreadorMonoJugador(Socket socket) {
+        ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
+        for(Letra letrita: letraList)
+        {
+            boolean haSidoPulsada=letrita.haSidoPulsada();
+            if(letrita.pasoLaPantalla()|| haSidoPulsada)
+            {
+                if(haSidoPulsada)
+                {
+                    touchSound.play();
+                    if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
+                    {
+                        miPuntaje+=letrita.tecladoVirtual.letra;
+                        elQueToca++;
+                    }
+                    if(elQueToca==palabra.length())
+                    {
+
+                        elQueToca=0;
+                        miPuntaje="";
+                        laPalabraQueToca++;
+                        palabra=nextPalabraMonoJugador();
+                    }
+
+                }
+                letrasAEliminar.add(letrita);
+                letrita.remove();
+                letrita.detach();
+            }
+        }
+        for(Letra letrita: letrasAEliminar)
+        {
+            letraList.remove(letrita);
+        }
+    }
+
+    private String nextPalabraMonoJugador() {
+        if(laPalabraQueToca==palabras.size())
+        {
+            return "-1";
+        }
+        return palabras.get(laPalabraQueToca);
     }
 }

@@ -2,7 +2,10 @@ package com.losdelcallejon.gamesmachine;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.losdelcallejon.gamesmachine.Screens.GameScreen;
 import com.losdelcallejon.gamesmachine.Screens.LoginScreen;
 import com.losdelcallejon.gamesmachine.Screens.MenuScreen;
 
@@ -40,7 +43,7 @@ public class AbcGameMain extends Game {
 		try {
 			socket= IO.socket(Constants.SOCKET_URL);
 			socket.connect();
-			actionResolver.showToast("Socket conectado exitosamente",5000);
+			///actionResolver.showToast("Socket conectado exitosamente",5000);
 		}catch (Exception ex)
 		{
 			System.out.printf(ex.getMessage());
@@ -67,9 +70,13 @@ public class AbcGameMain extends Game {
 	}
 	private void cargarRecursos() {
 		manager.load("monoplayer.jpg", Texture.class);
+		manager.load("playerShip.png",Texture.class);
 		manager.load("multiplayer.png", Texture.class);
 		manager.load("overfloor.png", Texture.class);
 		manager.load("buscando.jpeg", Texture.class);
+		manager.load("learn.png",Texture.class);
+		manager.load("lion.png",Texture.class);
+		manager.load("play.png",Texture.class);
 		manager.load("abc/A.png",Texture.class);
 		manager.load("abc/B.png",Texture.class);
 		manager.load("abc/C.png",Texture.class);
@@ -97,5 +104,8 @@ public class AbcGameMain extends Game {
 		manager.load("abc/X.png",Texture.class);
 		manager.load("abc/Y.png",Texture.class);
 		manager.load("abc/Z.png",Texture.class);
+		manager.load("audio/die.ogg", Sound.class);
+		manager.load("audio/jump.ogg", Sound.class);
+		manager.load("audio/song.ogg", Music.class);
 	}
 }

@@ -3,11 +3,14 @@ package com.losdelcallejon.gamesmachine.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -40,14 +43,16 @@ public class MenuScreen extends BaseScreen {
         this.actionResolver = actionResolver;
         esMultijugador=false;
         nivel=-1;
-        this.interfazGrafica=new Stage(new FitViewport(640, 360));
+        this.interfazGrafica=new Stage(new FitViewport(512, 360));
         while(!game.getManager().update());
         monoJugador = new Image(game.getManager().get("monoplayer.jpg", Texture.class));
         multiJugador = new Image(game.getManager().get("multiplayer.png", Texture.class));
         Unidad1 = new Image(game.getManager().get("overfloor.png", Texture.class));
         Unidad2 = new Image(game.getManager().get("overfloor.png", Texture.class));
+
         multiJugador.addListener(new InputListener()
         {
+
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 esMultijugador=true;
                 return true;
@@ -60,8 +65,25 @@ public class MenuScreen extends BaseScreen {
                 return true;
             }
         });
-        monoJugador.setPosition(10, 360-monoJugador.getHeight());
-        multiJugador.setPosition(20+multiJugador.getWidth(),360-monoJugador.getHeight());
+        Unidad1.addListener(new InputListener()
+        {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                nivel=0;
+                createOptionsGameScreen();
+                return true;
+
+            }
+        });
+        Unidad2.addListener(new InputListener()
+        {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                nivel=1;
+                createOptionsGameScreen();
+                return true;
+            }
+        });
+        monoJugador.setPosition(0, 360-monoJugador.getHeight());
+        multiJugador.setPosition(multiJugador.getWidth(),360-monoJugador.getHeight());
         Unidad1.setPosition(50,10);
         Unidad2.setPosition(200+Unidad1.getWidth(),10);
         interfazGrafica.addActor(monoJugador);
@@ -70,29 +92,15 @@ public class MenuScreen extends BaseScreen {
         interfazGrafica.addActor(Unidad2);
     }
 
-    @Override
-    public void resume() {
-        super.resume();
+    private void createOptionsGameScreen() {
+        OptionGameScreen optionGameScreen=new OptionGameScreen(game,esMultijugador,nivel,actionResolver);
+        game.setScreen(optionGameScreen);
     }
 
     @Override
     public void show()
     {
-        super.show();
-        Unidad1.addListener(new InputListener()
-        {
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                nivel=0;
-                return true;
-            }
-        });
-        Unidad2.addListener(new InputListener()
-        {
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                nivel=1;
-                return true;
-            }
-        });
+        Gdx.input.setInputProcessor(interfazGrafica);
     }
 
 
@@ -106,15 +114,11 @@ public class MenuScreen extends BaseScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         interfazGrafica.act();
         interfazGrafica.draw();
-        if(nivel>-1)
-        {
-            OptionGameScreen optionGameScreen=new OptionGameScreen(game,esMultijugador,nivel);
-            game.setScreen(optionGameScreen);
-        }
     }
 
     @Override
     public void hide() {
+        Gdx.input.setInputProcessor(null);
         interfazGrafica.dispose();
     }
 }
