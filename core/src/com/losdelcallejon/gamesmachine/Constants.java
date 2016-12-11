@@ -21,8 +21,67 @@ public class Constants {
 
 
     public static final int PIXELS_IN_METER=90;
-
-
+    public static String toString(int letra)
+    {
+        switch (letra)
+        {
+            case 0:
+                return "A";
+            case 1:
+                return "B";
+            case 2:
+                return "C";
+            case 3:
+                return "D";
+            case 4:
+                return "E";
+            case 5:
+                return "F";
+            case 6:
+                return "G";
+            case 7:
+                return "H";
+            case 8:
+                return "I";
+            case 9:
+                return "J";
+            case 10:
+                return "K";
+            case 11:
+                return "L";
+            case 12:
+                return "M";
+            case 13:
+                return "N";
+            case 14:
+                return "Ñ";
+            case 15:
+                return "O";
+            case 16:
+                return "P";
+            case 17:
+                return "Q";
+            case 18:
+                return "R";
+            case 19:
+                return "S";
+            case 20:
+                return "T";
+            case 21:
+                return "U";
+            case 22:
+                return "V";
+            case 23:
+                return "W";
+            case 24:
+                return "X";
+            case 25:
+                return "Y";
+            case 26:
+                return "Z";
+        }
+        return "A";
+    }
     public static HashMap<String,String> OBTENER_ABECEDARIO()
     {
         HashMap<String,String> abecedario=new HashMap<String,String>();

@@ -5,7 +5,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.losdelcallejon.gamesmachine.InputControllers.AbcController;
@@ -33,27 +39,32 @@ public class GameScreen extends BaseScreen {
     private Stage stage;
     private World world;
     private AbcController abcController;
-
+    private Label puntaje;
+    private Skin skin;
     public GameScreen(AbcGameMain g,int nivel,boolean isMultiPlayer) {
         super(g);
         this.nivel=nivel;
         this.isMultiplayer=isMultiPlayer;
         Abecedario=Constants.OBTENER_ABECEDARIO();
-        // OBTENER LA PRIMER PALABRA DEL NIVEL DADO Y ESPERAR LA RESPUESTA DEL SERVIDOR
-        //Object parametros=new Object();
-        //game.socket.emit(Constants.GET_PALABRA_NIVEL,parametros);
-        palabra="SAMUEL";
-        this.stage=new Stage(new FitViewport(640,360));
-        this.world=new World(new Vector2(0,-12),true);
-        this.letraList=new ArrayList<Letra>();
-        abcController=new AbcController(Abecedario,palabra,letraList,stage,world,game.getManager());
+            // OBTENER LA PRIMER PALABRA DEL NIVEL DADO Y ESPERAR LA RESPUESTA DEL SERVIDOR
+            //Object parametros=new Object();
+            //game.socket.emit(Constants.GET_PALABRA_NIVEL,parametros);
+            palabra="SAMUEL";
+            this.stage=new Stage(new FitViewport(640,360));
+            this.world=new World(new Vector2(0,-8),true);
+            skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+            puntaje = new Label(palabra, skin);
+            puntaje.setSize(200, 80);
+            puntaje.setPosition(0, 0);
+            this.stage.addActor(puntaje);
+            this.letraList=new ArrayList<Letra>();
+            abcController=new AbcController(Abecedario,palabra,letraList,stage,world,game.getManager());
 
     }
 
     @Override
     public void show() {
-
-        abcController.generarLetras();
+        abcController.cargarRecursosDeLetras(abcController.generarLetras());
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -62,7 +73,15 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        abcController.pintar(delta);
+            abcController.validar();
+            if(abcController.letrasVacias())
+            {
+                //int z=world.getBodyCount();
+                //Array<Actor> z=stage.getActors();
+                abcController.cargarRecursosDeLetras(abcController.generarLetras());
+            }
+            puntaje.setText(abcController.getMiPuntaje());
+            abcController.pintar(delta);
     }
 
 
