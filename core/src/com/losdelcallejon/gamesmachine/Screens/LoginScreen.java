@@ -25,22 +25,13 @@ public class LoginScreen extends BaseScreen {
     ActionResolver actionResolver;
 
     private Stage stage;
-<<<<<<< HEAD
     private String nombre,sexo;
-=======
-   // private Skin skin;
->>>>>>> 8543b1b659be3d1da0f5f70265bea52d5cb614da
     private FondoLogin fl;
     public LoginScreen(AbcGameMain g,ActionResolver actionResolver) {
         super(g);
         this.actionResolver = actionResolver;
         gl = Gdx.app.getGraphics().getGL20();
         stage = new Stage(new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-<<<<<<< HEAD
-=======
-       // skin = new Skin(Gdx.files.internal("Scene2D/uiskin.json"));
-
->>>>>>> 8543b1b659be3d1da0f5f70265bea52d5cb614da
         Gdx.input.setInputProcessor(stage);
         fl = new FondoLogin();
         fl.setPosition(Gdx.graphics.getWidth()/4,0);
@@ -133,12 +124,12 @@ public class LoginScreen extends BaseScreen {
     }
     @Override
     public void show() {
-<<<<<<< HEAD
+//<<<<<<< HEAD
       //  game.setScreen(game.menuScreen);
-=======
+//=======
 
       game.goToMenuScreen();
->>>>>>> 8543b1b659be3d1da0f5f70265bea52d5cb614da
+//>>>>>>> 8543b1b659be3d1da0f5f70265bea52d5cb614da
     }
 
     @Override
