@@ -83,6 +83,15 @@ public class ActionResolverAndroid implements ActionResolver {
     }
 
     @Override
+    public List<Integer> obtenerUnidadesDelUsuario() {
+        bd.OpenDatabase();
+        List<Integer> lista ;
+        lista = bd.obtenerUnidadesDelUsuario();
+        bd.CloseDatabase();
+        return lista;
+    }
+
+    @Override
     public String obtenerResponse() {
         return getResponse();
     }
