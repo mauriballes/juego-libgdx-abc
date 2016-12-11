@@ -17,7 +17,6 @@ public class AbcGameMain extends Game {
 	public Socket socket;
 
 	// SCREENS PRINCIPALES
-	//public LoadingScreen loadingScreen;
 	public LoginScreen loginScreen;
 	public MenuScreen menuScreen;
 
@@ -27,8 +26,8 @@ public class AbcGameMain extends Game {
 	public AbcGameMain(ActionResolver actionResolver)
 	{
 		this.actionResolver = actionResolver;
-		//Todo falta inicializar el socket
-		//connectSocket();
+		//Inicializamos el scoket
+		connectSocket();
 	}
 	public AssetManager getManager() {
 		return manager;
@@ -41,6 +40,7 @@ public class AbcGameMain extends Game {
 		try {
 			socket= IO.socket(Constants.SOCKET_URL);
 			socket.connect();
+			actionResolver.showToast("Socket conectado exitosamente",5000);
 		}catch (Exception ex)
 		{
 			System.out.printf(ex.getMessage());

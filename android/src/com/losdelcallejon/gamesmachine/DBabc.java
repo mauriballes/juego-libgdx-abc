@@ -19,17 +19,24 @@ public class DBabc extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String Sql = "CREATE TABLE categorias(" +
+        String Sql = "CREATE TABLE usuarios(" +
                 "id INTEGER," +
                 "sexo VARCHAR(100))";
         DB.execSQL(Sql);
-        Sql = "CREATE TABLE categorias(" +
+        Sql = "CREATE TABLE unidades(" +
                 "id INTEGER," +
-                "sexo VARCHAR(100))";
+                "nombre VARCHAR(100),"+
+                "descripcion VARCHAR(100))";
         DB.execSQL(Sql);
-        Sql = "CREATE TABLE categorias(" +
+        Sql = "CREATE TABLE cursado(" +
                 "id INTEGER," +
-                "sexo VARCHAR(100))";
+                "fecha VARCHAR(100),"+
+                "unidad_id INTEGER)";
+        DB.execSQL(Sql);
+        Sql = "CREATE TABLE palabras(" +
+                "id INTEGER," +
+                "letra VARCHAR(100),"+
+                "unidad_id INTEGER)";
         DB.execSQL(Sql);
         this.esNuevaBD=true;
     }

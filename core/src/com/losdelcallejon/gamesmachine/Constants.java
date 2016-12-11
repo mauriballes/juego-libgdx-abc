@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class Constants {
     //// CONSTANTES DE LA CONEXION SOCKET
-    public static final String SOCKET_URL="http://localhost:8080";
+    public static final String SOCKET_URL="http://abcsocket.cf:80";
     public static final String GET_USER_EVENT="getUser";
     public static final String EJEMPLO_EVENTO="ESTO_ES_UN_EJEMPLO";
     public static final String GET_PALABRA_NIVEL="getNextWord";

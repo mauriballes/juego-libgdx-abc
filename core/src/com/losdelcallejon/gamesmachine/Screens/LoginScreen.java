@@ -2,7 +2,13 @@ package com.losdelcallejon.gamesmachine.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
@@ -13,32 +19,43 @@ import com.losdelcallejon.gamesmachine.Constants;
  * Created by HP on 09/12/2016.
  */
 public class LoginScreen extends BaseScreen {
-
-    /*
-                                   LEEME
-            TODO        NUEVO USUARIO                                                 LOGEAR
-        PONELE QUE HABLE SU NOMBRE DE USUARIO                    QUE DIGA SU NOMBRE DE USUARIO Y LO MANDAS
-        DOS VECES Y SI COINCIDEN LO MANDAS CON                   EN EL EVENTO TE LLEGARA EL RESULTADO Y SI
-        UN EVENTO AL SERVIDOR Y LUEGO LO MANDAS                  TE LLEGAN SUS DATOS PERSONALES LO MANDAS A LA SIGUIENTE PANTALLA(A LA PANTALLA DEL JUEGO =D )
-        A LA PANTALLA DE PERSONALIZACION(SI ES NINHO O NINHA)
-    * */
     GL20 gl;
     ActionResolver actionResolver;
 
     private Stage stage;
     private Skin skin;
+    private FondoLogin fl;
     public LoginScreen(AbcGameMain g,ActionResolver actionResolver) {
         super(g);
         this.actionResolver = actionResolver;
         gl = Gdx.app.getGraphics().getGL20();
         stage = new Stage(new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        skin = new Skin(Gdx.files.internal("Scene2D/uiskin.json"));
 
         Gdx.input.setInputProcessor(stage);
+        fl = new FondoLogin();
+
+        fl.setPosition(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+
+        stage.addActor(fl);
 
         //EJEMPLO DE COMO REGISTRAR EVENTOS
          //game.socket.on(Constants.EJEMPLO_EVENTO,this);
     }
+    public class FondoLogin extends Actor {
+        Texture texture = new Texture(Gdx.files.internal("ABC.PNG"));
 
+        public FondoLogin() {
+            setBounds(getX(), getY(), texture.getWidth(), texture.getHeight());
+        }
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            batch.draw(texture, getX(), getY(), getOriginX(), getOriginY(), getWidth(),
+                    getHeight(), getScaleX(), getScaleY(), getRotation(), 0, 0,
+                    texture.getWidth(), texture.getHeight(), false, false);
+        }
+    }
     @Override
     public void show() {
 
