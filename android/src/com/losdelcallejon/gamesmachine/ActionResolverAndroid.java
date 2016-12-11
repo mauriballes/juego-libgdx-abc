@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
 
+import java.util.List;
+
 /**
  * Created by Ricardo Justiniano on 10-Dec-16.
  */
@@ -91,6 +93,15 @@ public class ActionResolverAndroid implements ActionResolver {
         String b = this.bd.obtenerNombreUsuario();
         bd.CloseDatabase();
         return b;
+    }
+
+    @Override
+    public List<Integer> obtenerUnidadesDelUsuario() {
+        bd.OpenDatabase();
+        List<Integer> lista ;
+        lista = bd.obtenerUnidadesDelUsuario();
+        bd.CloseDatabase();
+        return lista;
     }
 
     public void setTts(TextToSpeech tts) {

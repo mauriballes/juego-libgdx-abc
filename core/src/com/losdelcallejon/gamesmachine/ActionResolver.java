@@ -1,5 +1,7 @@
 package com.losdelcallejon.gamesmachine;
 
+import java.util.List;
+
 /**
  * Created by Ricardo Justiniano on 10-Dec-16.
  */
@@ -11,4 +13,5 @@ public interface ActionResolver {
     public boolean esNuevoUsuario();
     public String obtenerResponse();
     public String obtenerNombreUsuario();
+    public List<Integer> obtenerUnidadesDelUsuario();
 }
