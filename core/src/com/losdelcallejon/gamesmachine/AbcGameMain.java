@@ -60,7 +60,7 @@ public class AbcGameMain extends Game {
 
 	public void goToMenuScreen() {
 		cargarRecursos();
-		menuScreen=new MenuScreen(this);
+		menuScreen=new MenuScreen(this,actionResolver);
 		while(!getManager().update());
 		setScreen(menuScreen);
 	}
@@ -69,6 +69,9 @@ public class AbcGameMain extends Game {
 		manager.load("multiplayer.png", Texture.class);
 		manager.load("overfloor.png", Texture.class);
 		manager.load("buscando.jpeg", Texture.class);
+		manager.load("learn.png",Texture.class);
+		manager.load("lion.png",Texture.class);
+		manager.load("play.png",Texture.class);
 		manager.load("abc/A.png",Texture.class);
 		manager.load("abc/B.png",Texture.class);
 		manager.load("abc/C.png",Texture.class);
