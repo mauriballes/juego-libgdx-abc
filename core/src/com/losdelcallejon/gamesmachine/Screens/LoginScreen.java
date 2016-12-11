@@ -15,6 +15,10 @@ import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.losdelcallejon.gamesmachine.ActionResolver;
 import com.losdelcallejon.gamesmachine.Constants;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import io.socket.emitter.Emitter;
 
 /**
@@ -36,6 +40,7 @@ public class LoginScreen extends BaseScreen {
         fl = new FondoLogin();
         fl.setPosition(Gdx.graphics.getWidth()/4,0);
         stage.addActor(fl);
+        game.socket.on(Constants.IDENTIFY_RES,this);
         Thread loginThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -52,26 +57,29 @@ public class LoginScreen extends BaseScreen {
     private void EjecutarLogin() throws InterruptedException {
         if (actionResolver.esNuevoUsuario()){
             while(true) {
-                actionResolver.tryTTS("Bienvenido, cual es tu nombre?");
-                Thread.sleep(3000);
-                actionResolver.showSpeechPopup();
-                Thread.sleep(4000);
-                String nombre1 = actionResolver.obtenerResponse();
-                actionResolver.tryTTS("Confirma tu nombre por favor");
-                Thread.sleep(3000);
-                actionResolver.showSpeechPopup();
-                Thread.sleep(4000);
-                String nombre2 = actionResolver.obtenerResponse();
+//                actionResolver.tryTTS("Bienvenido, cual es tu nombre?");
+//                Thread.sleep(3000);
+//                actionResolver.showSpeechPopup();
+//                Thread.sleep(4000);
+//                String nombre1 = actionResolver.obtenerResponse();
+//                actionResolver.tryTTS("Confirma tu nombre por favor");
+//                Thread.sleep(3000);
+//                actionResolver.showSpeechPopup();
+//                Thread.sleep(4000);
+//                String nombre2 = actionResolver.obtenerResponse();
+                String nombre1="hola";
+                String nombre2="hola";
                 if (nombre1.equals(nombre2)) {
                     actionResolver.tryTTS("Confirmado "+nombre1);
                     this.nombre = nombre1;
                     Thread.sleep(3000);
                     while(true) {
-                        actionResolver.tryTTS("Eres niño o niña?");
-                        Thread.sleep(3000);
-                        actionResolver.showSpeechPopup();
-                        Thread.sleep(4000);
-                        String sexo = actionResolver.obtenerResponse();
+//                        actionResolver.tryTTS("Eres niño o niña?");
+//                        Thread.sleep(3000);
+//                        actionResolver.showSpeechPopup();
+//                        Thread.sleep(4000);
+//                        String sexo = actionResolver.obtenerResponse();
+                        String sexo = "niño";
                         if (sexo.equals("niño") || sexo.equals("niña")) {
                             if (sexo.equals("niño")){
                                 this.sexo="M";
@@ -90,22 +98,33 @@ public class LoginScreen extends BaseScreen {
                     Thread.sleep(3000);
                 }
             }
-            if (sexo.equals("M")){
-                actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres un niño");
-            }else{
-                actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres una niña");
-            }
-            //EJEMPLO DE COMO REGISTRAR EVENTOS
-            game.socket.on(Constants.EJEMPLO_EVENTO, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
 
-                }
-            });
+            // fatla probar
+            JSONObject data = new JSONObject();
+            try {
+                data.put("username",this.nombre);
+                data.put("sexo",this.sexo);
+                game.socket.emit("identify",data);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }else{
             this.nombre = actionResolver.obtenerNombreUsuario();
+            this.sexo = actionResolver.obtenerSexoUsuario();
             actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tus progeso por favor");
+
+            //fatla probar
+            JSONObject data = new JSONObject();
+            try {
+                data.put("user_id",actionResolver.obtenerUsuarioID());
+                game.socket.emit("identify",data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+    //    game.goToMenuScreen(this.sexo);
     }
 
     public class FondoLogin extends Actor {
@@ -124,12 +143,7 @@ public class LoginScreen extends BaseScreen {
     }
     @Override
     public void show() {
-//<<<<<<< HEAD
-        game.setScreen(game.menuScreen);
-//=======
 
-      game.goToMenuScreen();
-//>>>>>>> 8543b1b659be3d1da0f5f70265bea52d5cb614da
     }
 
     @Override
@@ -139,8 +153,6 @@ public class LoginScreen extends BaseScreen {
         gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-        // EJEMPLO DE COMO MANDAR UN EJEMPLO AL SERVIDOR
-       // game.socket.emit(Constants.EJEMPLO_EVENTO,Object);
     }
 
     @Override
@@ -151,8 +163,30 @@ public class LoginScreen extends BaseScreen {
 
     @Override
     public void call(Object... args) {
+        JSONObject data = (JSONObject) args[0];
+        String evt="";
+        try {
+            evt = data.get("evento").toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        // UI SE CAPTURAN LOS EVENTOS Y CON PUROS IF EJECUTAMOS DISTINTAS ACCIONES TENEMOS QUE PONERNOS DE ACUERDO CON MAURICIO
-        // game.socket.on()
+        switch (evt){
+            case "identifyRes":
+                actionResolver.insertarUsuario(this.nombre,this.sexo);
+                try {
+                    JSONArray arrayUnidades = data.getJSONArray("unidades");
+                    for (int i = 0; i < arrayUnidades.length(); i++) {
+                       String descripcion = arrayUnidades.getJSONObject(i).getString("descripcion");
+                       String nombre = arrayUnidades.getJSONObject(i).getString("nombre");
+                       int nivel = arrayUnidades.getJSONObject(i).getInt("nivel");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                break;
+        }
     }
 }

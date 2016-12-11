@@ -41,7 +41,7 @@ public class Letra extends Actor {
         fixture= body.createFixture(letraShape,3);
         fixture.setUserData("Letra");
         letraShape.dispose();
-        setSize(Constants.PIXELS_IN_METER*0.5F,Constants.PIXELS_IN_METER*0.5F);
+        setSize(Constants.PIXELS_IN_METER*1,Constants.PIXELS_IN_METER*1);
         velocidadBajada=generarVelocidadBajada()*1.07f;
         this.tecladoVirtual=tecladoVirtual;
     }
@@ -63,7 +63,9 @@ public class Letra extends Actor {
     @Override
     public void act(float delta) {
 
-        body.applyForceToCenter(0,velocidadBajada,true);
+        body.applyTorque(0.5f,true);
+
+       // body.applyForceToCenter(0,velocidadBajada,true);
     }
 
     public void detach()

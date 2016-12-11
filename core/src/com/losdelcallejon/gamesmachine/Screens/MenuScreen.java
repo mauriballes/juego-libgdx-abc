@@ -34,11 +34,13 @@ public class MenuScreen extends BaseScreen {
     boolean esMultijugador;
     int nivel;
 
+    private String sexo;
     private ActionResolver actionResolver;
 
-    public MenuScreen(AbcGameMain g, ActionResolver ar) {
+    public MenuScreen(AbcGameMain g, String sexo, final ActionResolver actionResolver) {
         super(g);
-        this.actionResolver = ar;
+        this.sexo = sexo;
+        this.actionResolver = actionResolver;
         esMultijugador=false;
         nivel=-1;
         this.interfazGrafica=new Stage(new FitViewport(512, 360));
@@ -110,7 +112,11 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1f,1f,1f,1f);
+        if (this.sexo.equals("M")){
+            Gdx.gl.glClearColor(0f,0f,1f,1f);
+        }else{
+            Gdx.gl.glClearColor(1f,0.43f,0.78f,1f);
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         interfazGrafica.act();
         interfazGrafica.draw();

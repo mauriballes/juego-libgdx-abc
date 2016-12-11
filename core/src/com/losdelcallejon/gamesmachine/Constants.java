@@ -1,5 +1,6 @@
 package com.losdelcallejon.gamesmachine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -8,23 +9,27 @@ import java.util.HashMap;
 public class Constants {
     //// CONSTANTES DE LA CONEXION SOCKET
     public static final String SOCKET_URL="http://abcsocket.cf";
+    public static final String SOCKET_URL_Local="http://192.168.1.12:3000";
     public static final String GET_USER_EVENT="getUser";
+
     public static final String EJEMPLO_EVENTO="ESTO_ES_UN_EJEMPLO";
     public static final String GET_NEXT_PALABRA="getNextWord";
+    public static final String IDENTIFY_RES="identifyRes";
+
     public static final String UPDATE_OPONENTE="updateOponente";
     public static final String LETRA_PULSADA ="A" ;
     public static final String RENDERIZAR_LETRAS_POSICIONES="B";
     public static final String PALABRA_ACABADA = "C";
 
     ///Recepcionar respuestas
-    public static final int GET_NEXT_PALABRA_RESPUESTA=0;
-    public static final int LETRA_PULSADA_RESPUESTA=1;
-    public static final int RENDERIZAR_LETRAS_POSICIONES_RESPUESTA=2;
+    public static final int LETRA_PULSADA_RESPUESTA=0;
+    public static final int RENDERIZAR_LETRAS_POSICIONES_RESPUESTA=1;
 
 
 
     //Otros
-    public static final int PIXELS_IN_METER=90;
+    public static final int PIXELS_IN_METER=225;
+    public static final String ENVIAR_PALABRA = "DFD";
 
 
     public static String toString(int letra)
@@ -121,4 +126,12 @@ public class Constants {
         return abecedario;
     }
 
+    public static ArrayList<String> DummyFactoryWords()
+    {
+        ArrayList<String> words=new ArrayList<String>();
+        words.add("AAA");
+        words.add("DDD");
+        words.add("MMM");
+        return  words;
+    }
 }

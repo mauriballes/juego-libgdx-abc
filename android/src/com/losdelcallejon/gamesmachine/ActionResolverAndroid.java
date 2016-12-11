@@ -96,12 +96,24 @@ public class ActionResolverAndroid implements ActionResolver {
     }
 
     @Override
-    public List<Integer> obtenerUnidadesDelUsuario() {
+    public int obtenerUsuarioID() {
         bd.OpenDatabase();
-        List<Integer> lista ;
-        lista = bd.obtenerUnidadesDelUsuario();
+        int b = this.bd.obtenerUsuarioID();
         bd.CloseDatabase();
-        return lista;
+        return b;
+    }
+
+    @Override
+    public String obtenerSexoUsuario() {
+        bd.OpenDatabase();
+        String b = this.bd.obtenerSexoUsuario();
+        bd.CloseDatabase();
+        return b;
+    }
+
+    @Override
+    public void insertarUsuario(String nombre, String sexo) {
+
     }
 
     public void setTts(TextToSpeech tts) {
