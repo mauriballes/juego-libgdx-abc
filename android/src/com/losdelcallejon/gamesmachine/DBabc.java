@@ -162,6 +162,7 @@ public class DBabc extends SQLiteOpenHelper {
         }
         return null;
     }
+
     public int obtenerIdUnidad(String nombreUnidad) {
         String s = "";
         Cursor c = DB.rawQuery("SELECT * FROM unidades where nombre='"+nombreUnidad+"'", null);
@@ -178,5 +179,36 @@ public class DBabc extends SQLiteOpenHelper {
             return c.getString(3);
         }
         return null;
+    }
+
+    public List<MUnidades> obtenerListUnidades(){
+        String s = "";
+        List<MUnidades> list = new ArrayList<>();
+        Cursor c = DB.rawQuery("SELECT * FROM unidades ORDER BY "+2, null);
+        if (c.moveToNext()) {
+            MUnidades unidad = new MUnidades(
+                    c.getInt(0),
+                    c.getInt(1),
+                    c.getString(2),
+                    c.getString(3)
+            );
+            list.add(unidad);
+        }
+        return list;
+    }
+
+    public List<MCursados> obtenerListUnidadesCursadas() {
+        String s = "";
+        List<MCursados> list = new ArrayList<>();
+        Cursor c = DB.rawQuery("SELECT * FROM cursados WHERE id=" + getIdUsuario(), null);
+        if (c.moveToNext()) {
+            MCursados cursados = new MCursados(
+                    c.getInt(0),
+                    c.getString(1),
+                    c.getInt(2)
+            );
+            list.add(cursados);
+        }
+        return list;
     }
 }

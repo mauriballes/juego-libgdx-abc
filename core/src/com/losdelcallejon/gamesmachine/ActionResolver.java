@@ -24,4 +24,6 @@ public interface ActionResolver {
     public int obtenerIdUnidad(String nombreUnidad);
     public void insertarPalabra(int i, String letra, int id_unidad);
     public String obtenerMongoId();
+    public List<MCursados> obtenerListUnidadesCursadas();
+    public List<MUnidades> obtenerListUnidades();
 }
