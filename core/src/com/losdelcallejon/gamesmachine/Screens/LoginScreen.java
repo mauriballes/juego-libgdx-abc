@@ -96,12 +96,7 @@ public class LoginScreen extends BaseScreen {
                 actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres una niña");
             }
             //EJEMPLO DE COMO REGISTRAR EVENTOS
-            game.socket.on(Constants.EJEMPLO_EVENTO, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-
-                }
-            });
+           // game.socket.on(Constants.EJEMPLO_EVENTO,
         }else{
             this.nombre = actionResolver.obtenerNombreUsuario();
             actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tus progeso por favor");
@@ -128,7 +123,7 @@ public class LoginScreen extends BaseScreen {
       //  game.setScreen(game.menuScreen);
 //=======
 
-      game.goToMenuScreen();
+      //game.goToMenuScreen();
 //>>>>>>> 8543b1b659be3d1da0f5f70265bea52d5cb614da
     }
 
