@@ -43,7 +43,6 @@ public class AbcGameMain extends Game {
 		try {
 			socket= IO.socket(Constants.SOCKET_URL);
 			socket.connect();
-			///actionResolver.showToast("Socket conectado exitosamente",5000);
 		}catch (Exception ex)
 		{
 			System.out.printf(ex.getMessage());

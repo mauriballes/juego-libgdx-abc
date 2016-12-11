@@ -71,7 +71,7 @@ public class DBabc extends SQLiteOpenHelper {
     public void insertarUsuario(int id,String username,String sexo)
     {
         String sentencia="INSERT INTO usuarios (id,username,sexo) VALUES ("
-                + 1 +",'"+ username + "','"+sexo+"')";
+                + id +",'"+ username + "','"+sexo+"')";
         DB.execSQL(sentencia);
     }
     public void insertarUnidades(int id,int nivel,String nombre,String descripcion)

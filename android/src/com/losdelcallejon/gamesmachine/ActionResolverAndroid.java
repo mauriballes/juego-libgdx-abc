@@ -111,7 +111,9 @@ public class ActionResolverAndroid implements ActionResolver {
 
     @Override
     public void insertarUsuario(String nombre, String sexo) {
-
+    bd.OpenDatabase();
+    bd.insertarUsuario(1,nombre,sexo);
+    bd.CloseDatabase();
     }
 
     public void setTts(TextToSpeech tts) {
