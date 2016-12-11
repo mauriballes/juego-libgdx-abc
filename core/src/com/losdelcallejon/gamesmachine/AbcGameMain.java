@@ -3,7 +3,6 @@ package com.losdelcallejon.gamesmachine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.losdelcallejon.gamesmachine.Screens.LoadingScreen;
 import com.losdelcallejon.gamesmachine.Screens.LoginScreen;
 import com.losdelcallejon.gamesmachine.Screens.MenuScreen;
 
@@ -12,20 +11,22 @@ import io.socket.client.Socket;
 
 public class AbcGameMain extends Game {
 
+	ActionResolver actionResolver;
 	/// RECURSOS
 	private AssetManager manager;
 	public Socket socket;
 
 	// SCREENS PRINCIPALES
-	public LoadingScreen loadingScreen;
+	//public LoadingScreen loadingScreen;
 	public LoginScreen loginScreen;
 	public MenuScreen menuScreen;
 
 	//// IDENTIFICADOR DE USUARIO
 	public int usuarioId;
 
-	public AbcGameMain()
+	public AbcGameMain(ActionResolver actionResolver)
 	{
+		this.actionResolver = actionResolver;
 		//Todo falta inicializar el socket
 		//connectSocket();
 	}
@@ -52,12 +53,11 @@ public class AbcGameMain extends Game {
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
 		manager.load("player.png", Texture.class);
-		loadingScreen=new LoadingScreen(this);
-		setScreen(loadingScreen);
+		loginScreen=new LoginScreen(this,actionResolver);
+		setScreen(loginScreen);
 	}
 
-	public void goToLogin() {
-		loginScreen=new LoginScreen(this);
+	public void goToMenuScreen() {
 		menuScreen=new MenuScreen(this);
 		setScreen(menuScreen);
 	}
