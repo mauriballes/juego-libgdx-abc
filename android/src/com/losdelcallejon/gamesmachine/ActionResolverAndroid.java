@@ -9,7 +9,10 @@ import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
+import com.losdelcallejon.gamesmachine.Models.MCursados;
+import com.losdelcallejon.gamesmachine.Models.MUnidades;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -125,6 +128,24 @@ public class ActionResolverAndroid implements ActionResolver {
     bd.OpenDatabase();
     bd.insertarUsuario(1,nombre,sexo);
     bd.CloseDatabase();
+    }
+
+    @Override
+    public List<MCursados> obtenerListUnidadesCursadas() {
+        bd.OpenDatabase();
+        List<MCursados> lista;
+        lista = bd.obtenerListUnidadesCursadas();
+        bd.CloseDatabase();
+        return lista;
+    }
+
+    @Override
+    public List<MUnidades> obtenerListUnidades() {
+        bd.OpenDatabase();
+        List<MUnidades> lista;
+        lista = bd.obtenerListUnidades();
+        bd.CloseDatabase();
+        return lista;
     }
 
     public void setTts(TextToSpeech tts) {

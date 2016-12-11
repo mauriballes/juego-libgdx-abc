@@ -15,6 +15,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.losdelcallejon.gamesmachine.ActionResolver;
+import com.losdelcallejon.gamesmachine.Models.MCursados;
+import com.losdelcallejon.gamesmachine.Models.MUnidades;
+
 
 /**
  * Created by HP on 09/12/2016.
@@ -33,98 +36,156 @@ public class MenuScreen extends BaseScreen {
     private Stage interfazGrafica;
     boolean esMultijugador;
     int nivel;
+    boolean primerPantalla;
+    private Stage interfazGraficaDos;
+    java.util.List<MUnidades> listUnidades;
+    java.util.List<MCursados> listCursados;
+    java.util.List<Integer> listCursadosId;
 
     private String sexo;
     private ActionResolver actionResolver;
 
     public MenuScreen(AbcGameMain g, String sexo, final ActionResolver actionResolver) {
         super(g);
+        this.primerPantalla = true;
         this.sexo = sexo;
         this.actionResolver = actionResolver;
-        esMultijugador=false;
-        nivel=-1;
-        this.interfazGrafica=new Stage(new FitViewport(512, 360));
-        while(!game.getManager().update());
+        this.listUnidades = this.actionResolver.obtenerListUnidades();
+        this.listCursados = this.actionResolver.obtenerListUnidadesCursadas();
+        this.listCursadosId = this.actionResolver.obtenerUnidadesDelUsuario();
+        esMultijugador = false;
+        nivel = -1;
+        this.interfazGrafica = new Stage(new FitViewport(512, 360));
+        this.interfazGraficaDos = new Stage(new FitViewport(512, 360));
+        while (!game.getManager().update()) ;
+
+        cargarUnidades();
+
         monoJugador = new Image(game.getManager().get("monoplayer.jpg", Texture.class));
         multiJugador = new Image(game.getManager().get("multiplayer.png", Texture.class));
-        Unidad1 = new Image(game.getManager().get("overfloor.png", Texture.class));
-        Unidad2 = new Image(game.getManager().get("overfloor.png", Texture.class));
-        verificarUnidadesDisponibles();
-        Unidad2.setVisible(false);
 
-        multiJugador.addListener(new InputListener()
-        {
-
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                esMultijugador=true;
+        multiJugador.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                createSegundaPantalla(true);
                 return true;
             }
         });
-        monoJugador.addListener(new InputListener()
-        {
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                esMultijugador=false;
+        monoJugador.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                createSegundaPantalla(false);
                 return true;
             }
         });
-        Unidad1.addListener(new InputListener()
-        {
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                nivel=0;
-                createOptionsGameScreen();
-                return true;
-
-            }
-        });
-        Unidad2.addListener(new InputListener()
-        {
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                nivel=1;
-                createOptionsGameScreen();
-                return true;
-            }
-        });
-        monoJugador.setPosition(0, 360-monoJugador.getHeight());
-        multiJugador.setPosition(multiJugador.getWidth(),360-monoJugador.getHeight());
-        Unidad1.setPosition(50,10);
-        Unidad2.setPosition(200+Unidad1.getWidth(),10);
+//        Unidad1.addListener(new InputListener()
+//        {
+//            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+//                nivel=0;
+//                createOptionsGameScreen();
+//                return true;
+//
+//            }
+//        });
+//        Unidad2.addListener(new InputListener()
+//        {
+//            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+//                nivel=1;
+//                createOptionsGameScreen();
+//                return true;
+//            }
+//        });
+        monoJugador.setPosition(0, 360 - monoJugador.getHeight());
+        multiJugador.setPosition(multiJugador.getWidth(), 360 - monoJugador.getHeight());
         interfazGrafica.addActor(monoJugador);
         interfazGrafica.addActor(multiJugador);
-        interfazGrafica.addActor(Unidad1);
-        interfazGrafica.addActor(Unidad2);
+
+
+//        Unidad1 = new Image(game.getManager().get("overfloor.png", Texture.class));
+//        Unidad2 = new Image(game.getManager().get("overfloor.png", Texture.class));
+//        Unidad1.setPosition(50,10);
+//        Unidad2.setPosition(200+Unidad1.getWidth(),10);
+//        interfazGraficaDos.addActor(Unidad1);
+//        interfazGraficaDos.addActor(Unidad2);
     }
 
-    private void verificarUnidadesDisponibles() {
+    private void cargarUnidades() {
+        int separadorAncho = 20;
+        int separadorLargo = 20;
+        int fila = 2;
+        int columna = 0;
+        for (int i = 0; i < this.listUnidades.size(); i++) {
+            final MUnidades mUnidad = this.listUnidades.get(i);
+            Image Unidad = new Image(game.getManager().get("overfloor.png", Texture.class));
+            if (i == 0) {
+                Unidad.setPosition(0, 360 - Unidad.getHeight());
+            } else {
+                columna++;
+                Unidad.setPosition(columna * Unidad.getWidth() + separadorLargo, 360 - (fila * Unidad.getHeight() + separadorAncho));
+                if ((i % 3) == 0) {
+                    fila++;
+                }
+            }
+            Unidad.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    nivel = mUnidad.getNivel();
+                    createOptionsGameScreen();
+                    return true;
+                }
+            });
+//            Unidad.setVisible(mostrarUnidadesDisponibles(mUnidad));
+            interfazGraficaDos.addActor(Unidad);
+        }
+    }
 
+    private void createSegundaPantalla(boolean esMultijugador) {
+        this.esMultijugador = esMultijugador;
+        primerPantalla = false;
+        Gdx.input.setInputProcessor(interfazGraficaDos);
+    }
+
+    private boolean mostrarUnidadesDisponibles(MUnidades unidad) {
+        for (int i = 0; i < listCursados.size(); i++) {
+            MCursados cursado = this.listCursados.get(i);
+            if (unidad.getId() == cursado.getUnidad_id()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void createOptionsGameScreen() {
-        OptionGameScreen optionGameScreen=new OptionGameScreen(game,esMultijugador,nivel,actionResolver);
+        OptionGameScreen optionGameScreen = new OptionGameScreen(game, esMultijugador, nivel, actionResolver);
         game.setScreen(optionGameScreen);
     }
 
     @Override
-    public void show()
-    {
+    public void show() {
         Gdx.input.setInputProcessor(interfazGrafica);
     }
 
 
     @Override
     public void render(float delta) {
-        if (this.sexo.equals("M")){
-            Gdx.gl.glClearColor(0f,0f,1f,1f);
-        }else{
-            Gdx.gl.glClearColor(1f,0.43f,0.78f,1f);
+        if (this.sexo.equals("M")) {
+            Gdx.gl.glClearColor(0f, 0f, 1f, 1f);
+        } else {
+            Gdx.gl.glClearColor(1f, 0.43f, 0.78f, 1f);
         }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        interfazGrafica.act();
-        interfazGrafica.draw();
+        if (primerPantalla) {
+            interfazGrafica.act();
+            interfazGrafica.draw();
+        } else {
+            interfazGraficaDos.act();
+            interfazGraficaDos.draw();
+        }
+
     }
 
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
         interfazGrafica.dispose();
+        interfazGraficaDos.dispose();
+
     }
 }

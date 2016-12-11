@@ -1,5 +1,8 @@
 package com.losdelcallejon.gamesmachine;
 
+import com.losdelcallejon.gamesmachine.Models.MCursados;
+import com.losdelcallejon.gamesmachine.Models.MUnidades;
+
 import java.util.List;
 
 /**
@@ -13,13 +16,13 @@ public interface ActionResolver {
     public boolean esNuevoUsuario();
     public String obtenerResponse();
     public String obtenerNombreUsuario();
-<<<<<<< HEAD
     public List<Integer> obtenerUnidadesDelUsuario();
-=======
     public int obtenerUsuarioID();
 
     public String obtenerSexoUsuario();
 
     public void insertarUsuario(String nombre, String sexo);
->>>>>>> 7a18968dcc41651fb4ce8cff3569ac6e7643eb1b
+
+    public List<MCursados> obtenerListUnidadesCursadas();
+    public List<MUnidades> obtenerListUnidades();
 }

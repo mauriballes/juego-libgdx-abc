@@ -55,8 +55,8 @@ public class GameScreen extends BaseScreen {
             super(g);
                 if(palabras.size()==0)
                 {
-                    MenuScreen menuScreen=new MenuScreen(game);
-                    game.setScreen(menuScreen);
+//                    MenuScreen menuScreen=new MenuScreen(game);
+//                    game.setScreen(menuScreen);
                 }else{
                     this.unidad = unidad;
                     this.isMultiplayer = isMultiPlayer;
@@ -134,8 +134,8 @@ public class GameScreen extends BaseScreen {
                 }else if(abcController.getPalabra().equals("-1"))
                 {
                     bgMusic.stop();
-                    MenuScreen menuScreen=new MenuScreen(game);
-                    game.setScreen(menuScreen);
+//                    MenuScreen menuScreen=new MenuScreen(game);
+//                    game.setScreen(menuScreen);
                 }
             }else   // Si es multijugador
             {
