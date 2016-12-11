@@ -49,6 +49,8 @@ public class MenuScreen extends BaseScreen {
         multiJugador = new Image(game.getManager().get("multiplayer.png", Texture.class));
         Unidad1 = new Image(game.getManager().get("overfloor.png", Texture.class));
         Unidad2 = new Image(game.getManager().get("overfloor.png", Texture.class));
+        verificarUnidadesDisponibles();
+        Unidad2.setVisible(false);
 
         multiJugador.addListener(new InputListener()
         {
@@ -90,6 +92,10 @@ public class MenuScreen extends BaseScreen {
         interfazGrafica.addActor(multiJugador);
         interfazGrafica.addActor(Unidad1);
         interfazGrafica.addActor(Unidad2);
+    }
+
+    private void verificarUnidadesDisponibles() {
+
     }
 
     private void createOptionsGameScreen() {

@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.Settings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Ricardo Justiniano on 10-Dec-16.
  */
@@ -23,7 +26,7 @@ public class DBabc extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
            String Sql = "CREATE TABLE usuarios(" +
                    "id INTEGER," +
-                   "username VARCHAR(100),"+
+                   "username VARCHAR(100)," +
                    "sexo VARCHAR(100))";
            sqLiteDatabase.execSQL(Sql);
            Sql = "CREATE TABLE unidades(" +
@@ -68,6 +71,7 @@ public class DBabc extends SQLiteOpenHelper {
         DB.close();
     }
 
+
     public void insertarUsuario(int id,String username,String sexo)
     {
         String sentencia="INSERT INTO usuarios (id,username,sexo) VALUES ("
@@ -104,6 +108,7 @@ public class DBabc extends SQLiteOpenHelper {
         return true;
     }
 
+
     public String obtenerNombreUsuario() {
         String s = "";
         Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
@@ -111,6 +116,29 @@ public class DBabc extends SQLiteOpenHelper {
             return c.getString(1);
         }
         return null;
+    }
+
+    public List<Integer> obtenerUnidadesDelUsuario(){
+        String s = "";
+        Cursor c = DB.rawQuery("SELECT * FROM cursados WHERE id=" + getIdUsuario(), null);
+        List<Integer> listUnidades = new ArrayList<>();
+        while (c.moveToNext()){
+            Integer unidad = c.getInt(2);
+            listUnidades.add(unidad);
+        }
+        if(listUnidades.isEmpty()){
+            listUnidades.add(1); //Agrega la primer unidad
+        }
+        return listUnidades;
+    }
+
+    public int getIdUsuario(){
+        String s = "";
+        Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        return -1;
     }
 
     public int obtenerUsuarioID() {
