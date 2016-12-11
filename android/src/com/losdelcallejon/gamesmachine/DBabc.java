@@ -27,6 +27,7 @@ public class DBabc extends SQLiteOpenHelper {
            sqLiteDatabase.execSQL(Sql);
            Sql = "CREATE TABLE unidades(" +
                    "id INTEGER," +
+                   "nivel INTEGER," +
                    "nombre VARCHAR(100)," +
                    "descripcion VARCHAR(100))";
            sqLiteDatabase.execSQL(Sql);
@@ -72,10 +73,10 @@ public class DBabc extends SQLiteOpenHelper {
                 + id + ",'"+sexo+"')";
         DB.execSQL(sentencia);
     }
-    public void insertarUnidades(int id,String nombre,String descripcion)
+    public void insertarUnidades(int id,int nivel,String nombre,String descripcion)
     {
-        String sentencia="INSERT INTO productos (id,nombre,descripcion) VALUES ("
-                + id + ",'"+nombre+"','"+descripcion+"')";
+        String sentencia="INSERT INTO productos (id,nivel,nombre,descripcion) VALUES ("
+                + id +","+ nivel +",'"+nombre+"','"+descripcion+"')";
         DB.execSQL(sentencia);
     }
 

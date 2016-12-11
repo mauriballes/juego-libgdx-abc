@@ -120,7 +120,7 @@ public class LoginScreen extends BaseScreen {
     @Override
     public void show() {
 //<<<<<<< HEAD
-      //  game.setScreen(game.menuScreen);
+        game.setScreen(game.menuScreen);
 //=======
 
       //game.goToMenuScreen();
