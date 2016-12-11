@@ -13,11 +13,12 @@ public interface ActionResolver {
     public boolean esNuevoUsuario();
     public String obtenerResponse();
     public String obtenerNombreUsuario();
-
     public int obtenerUsuarioID();
-
     public String obtenerSexoUsuario();
-
-    public void insertarUsuario(String nombre, String sexo);
+    public void insertarUsuario(String nombre, String sexo,String mongo_id);
     public List<Integer> obtenerUnidadesDelUsuario();
+    public void insertarUnidad(int i, int nivel, String nombre, String descripcion);
+    public int obtenerIdUnidad(String nombreUnidad);
+    public void insertarPalabra(int i, String letra, int id_unidad);
+    public String obtenerMongoId();
 }

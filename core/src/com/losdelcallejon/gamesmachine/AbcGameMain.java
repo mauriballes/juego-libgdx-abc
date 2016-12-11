@@ -41,7 +41,7 @@ public class AbcGameMain extends Game {
 	}
 	private void connectSocket() {
 		try {
-			socket= IO.socket(Constants.SOCKET_URL);
+			socket= IO.socket(Constants.SOCKET_URL_Local);
 			socket.connect();
 		}catch (Exception ex)
 		{
@@ -54,11 +54,8 @@ public class AbcGameMain extends Game {
 		manager=new AssetManager();
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
-	//	goToMenuScreen();
-//		manager.load("player.png", Texture.class);
 		loginScreen=new LoginScreen(this,actionResolver);
 		setScreen(loginScreen);
-	//	goToMenuScreen("F");
 	}
 
 	public void goToMenuScreen(String sexo) {

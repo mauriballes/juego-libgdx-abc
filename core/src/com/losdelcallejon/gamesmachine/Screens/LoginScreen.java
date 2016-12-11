@@ -57,29 +57,29 @@ public class LoginScreen extends BaseScreen {
     private void EjecutarLogin() throws InterruptedException {
         if (actionResolver.esNuevoUsuario()){
             while(true) {
-//                actionResolver.tryTTS("Bienvenido, cual es tu nombre?");
-//                Thread.sleep(3000);
-//                actionResolver.showSpeechPopup();
-//                Thread.sleep(4000);
-//                String nombre1 = actionResolver.obtenerResponse();
-//                actionResolver.tryTTS("Confirma tu nombre por favor");
-//                Thread.sleep(3000);
-//                actionResolver.showSpeechPopup();
-//                Thread.sleep(4000);
-//                String nombre2 = actionResolver.obtenerResponse();
-                String nombre1="hola";
-                String nombre2="hola";
+                actionResolver.tryTTS("Bienvenido, cual es tu nombre?");
+                Thread.sleep(3000);
+                actionResolver.showSpeechPopup();
+                Thread.sleep(4000);
+                String nombre1 = actionResolver.obtenerResponse();
+                actionResolver.tryTTS("Confirma tu nombre por favor");
+                Thread.sleep(3000);
+                actionResolver.showSpeechPopup();
+                Thread.sleep(4000);
+                String nombre2 = actionResolver.obtenerResponse();
+//                String nombre1="hola";
+//                String nombre2="hola";
                 if (nombre1.equals(nombre2)) {
                     actionResolver.tryTTS("Confirmado "+nombre1);
                     this.nombre = nombre1;
                     Thread.sleep(3000);
                     while(true) {
-//                        actionResolver.tryTTS("Eres niño o niña?");
-//                        Thread.sleep(3000);
-//                        actionResolver.showSpeechPopup();
-//                        Thread.sleep(4000);
-//                        String sexo = actionResolver.obtenerResponse();
-                        String sexo = "niño";
+                        actionResolver.tryTTS("Eres niño o niña?");
+                        Thread.sleep(3000);
+                        actionResolver.showSpeechPopup();
+                        Thread.sleep(4000);
+                        String sexo = actionResolver.obtenerResponse();
+                      //  String sexo = "niño";
                         if (sexo.equals("niño") || sexo.equals("niña")) {
                             if (sexo.equals("niño")){
                                 this.sexo="M";
@@ -98,8 +98,6 @@ public class LoginScreen extends BaseScreen {
                     Thread.sleep(3000);
                 }
             }
-
-            // fatla probar
             JSONObject data = new JSONObject();
             try {
                 data.put("username",this.nombre);
@@ -115,16 +113,16 @@ public class LoginScreen extends BaseScreen {
             this.sexo = actionResolver.obtenerSexoUsuario();
             actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tus progeso por favor");
 
-            //fatla probar
+
             JSONObject data = new JSONObject();
             try {
-                data.put("user_id",actionResolver.obtenerUsuarioID());
+                data.put("mongo_id",actionResolver.obtenerMongoId());
                 game.socket.emit("identify",data);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-    //    game.goToMenuScreen(this.sexo);
+             game.goToMenuScreen(this.sexo);
     }
 
     public class FondoLogin extends Actor {
@@ -173,19 +171,31 @@ public class LoginScreen extends BaseScreen {
 
         switch (evt){
             case "identifyRes":
-                actionResolver.insertarUsuario(this.nombre,this.sexo);
+                try {
+                    JSONObject cliente = data.getJSONObject("cliente");
+                    actionResolver.insertarUsuario(this.nombre,this.sexo,cliente.getString("_id"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 try {
                     JSONArray arrayUnidades = data.getJSONArray("unidades");
                     for (int i = 0; i < arrayUnidades.length(); i++) {
                        String descripcion = arrayUnidades.getJSONObject(i).getString("descripcion");
                        String nombre = arrayUnidades.getJSONObject(i).getString("nombre");
                        int nivel = arrayUnidades.getJSONObject(i).getInt("nivel");
+                       actionResolver.insertarUnidad(i,nivel,nombre,descripcion);
+                    }
+                    JSONArray arrayPalabras = data.getJSONArray("palabras");
+                    for (int i = 0; i < arrayPalabras.length(); i++) {
+                    String letra = arrayPalabras.getJSONObject(i).getString("letras");
+                    String nombreUnidad = arrayPalabras.getJSONObject(i).getJSONObject("unidad").getString("nombre");
+                    int id_unidad = actionResolver.obtenerIdUnidad(nombreUnidad);
+                    actionResolver.insertarPalabra(i,letra,id_unidad);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
                 break;
         }
     }
