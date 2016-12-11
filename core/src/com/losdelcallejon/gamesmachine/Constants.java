@@ -12,15 +12,20 @@ public class Constants {
     public static final String EJEMPLO_EVENTO="ESTO_ES_UN_EJEMPLO";
     public static final String GET_PALABRA_NIVEL="getNextWord";
     public static final String UPDATE_OPONENTE="updateOponente";
+    public static final String LETRA_PULSADA ="A" ;
+    public static final String RENDERIZAR_LETRAS_POSICIONES="B";
+    public static final String PALABRA_ACABADA = "C";
 
-    ////CONSTANTES DE LA CONEXION SOCKET QUE DEVOLVERA MAURICIO PARA SABER QUE DECISION TOMAR
-
+    ///Recepcionar respuestas
     public static final int GET_PALABRA_NIVEL_RESPUESTA=0;
     public static final int UPDATE_OPONENTE_RESPUESTA=1;
 
 
 
+    //Otros
     public static final int PIXELS_IN_METER=90;
+
+
     public static String toString(int letra)
     {
         switch (letra)

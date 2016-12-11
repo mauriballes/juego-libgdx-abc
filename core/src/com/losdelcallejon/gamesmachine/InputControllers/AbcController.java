@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import io.socket.client.Socket;
+
 /**
  * Created by HP on 10/12/2016.
  */
@@ -149,7 +151,7 @@ public class AbcController {
         world.dispose();
     }
 
-    public void validar() {
+    public void validarCreador(Socket socket) {
         ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
         for(Letra letrita: letraList)
         {
@@ -162,6 +164,12 @@ public class AbcController {
                     {
                         miPuntaje+=letrita.tecladoVirtual.letra;
                         elQueToca++;
+                    }
+                    if(elQueToca==palabra.length())
+                    {
+                        socket.emit(Constants.PALABRA_ACABADA,"");
+                        elQueToca=0;
+                        miPuntaje="";
                     }
                 }
                 letrasAEliminar.add(letrita);
@@ -177,5 +185,31 @@ public class AbcController {
 
     public boolean letrasVacias() {
         return letraList.size()==0;
+    }
+
+    public void validarReceptor(Socket socket) {
+        ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
+        for(Letra letrita: letraList)
+        {
+            boolean haSidoPulsada=letrita.haSidoPulsada();
+                if(haSidoPulsada)
+                {
+                    if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
+                    {
+                        miPuntaje+=letrita.tecladoVirtual.letra;
+                        elQueToca++;
+                    }
+                    if(elQueToca==palabra.length())
+                    {
+                        socket.emit(Constants.PALABRA_ACABADA,"");
+                        elQueToca=0;
+                    }
+                    letrasAEliminar.add(letrita);
+                }
+        }
+        for(Letra letrita: letrasAEliminar)
+        {
+            letraList.remove(letrita);
+        }
     }
 }
