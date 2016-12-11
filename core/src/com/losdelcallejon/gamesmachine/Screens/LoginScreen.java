@@ -59,7 +59,8 @@ public class LoginScreen extends BaseScreen {
     @Override
     public void show() {
 
-      game.goToMenuScreen();
+      //game.goToMenuScreen();
+
     }
 
     @Override
