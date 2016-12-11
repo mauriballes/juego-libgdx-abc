@@ -52,14 +52,16 @@ public class AbcGameMain extends Game {
 		manager=new AssetManager();
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
-		manager.load("player.png", Texture.class);
-		loginScreen=new LoginScreen(this,actionResolver);
-		setScreen(loginScreen);
+		goToMenuScreen();
+//		manager.load("player.png", Texture.class);
+//		loginScreen=new LoginScreen(this,actionResolver);
+//		setScreen(loginScreen);
 	}
 
 	public void goToMenuScreen() {
 		cargarRecursos();
 		menuScreen=new MenuScreen(this);
+		while(!getManager().update());
 		setScreen(menuScreen);
 	}
 	private void cargarRecursos() {
