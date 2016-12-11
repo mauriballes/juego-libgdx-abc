@@ -3,7 +3,6 @@ package com.losdelcallejon.gamesmachine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.losdelcallejon.gamesmachine.Screens.LoadingScreen;
 import com.losdelcallejon.gamesmachine.Screens.LoginScreen;
 import com.losdelcallejon.gamesmachine.Screens.MenuScreen;
 
@@ -12,22 +11,23 @@ import io.socket.client.Socket;
 
 public class AbcGameMain extends Game {
 
+	ActionResolver actionResolver;
 	/// RECURSOS
 	private AssetManager manager;
 	public Socket socket;
 
 	// SCREENS PRINCIPALES
-	public LoadingScreen loadingScreen;
 	public LoginScreen loginScreen;
 	public MenuScreen menuScreen;
 
 	//// IDENTIFICADOR DE USUARIO
 	public int usuarioId;
 
-	public AbcGameMain()
+	public AbcGameMain(ActionResolver actionResolver)
 	{
-		//Todo falta inicializar el socket
-		//connectSocket();
+		this.actionResolver = actionResolver;
+		//Inicializamos el scoket
+		connectSocket();
 	}
 	public AssetManager getManager() {
 		return manager;
@@ -40,6 +40,7 @@ public class AbcGameMain extends Game {
 		try {
 			socket= IO.socket(Constants.SOCKET_URL);
 			socket.connect();
+			actionResolver.showToast("Socket conectado exitosamente",5000);
 		}catch (Exception ex)
 		{
 			System.out.printf(ex.getMessage());
@@ -51,12 +52,16 @@ public class AbcGameMain extends Game {
 		manager=new AssetManager();
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
-		cargarRecursos();
-
-		loadingScreen=new LoadingScreen(this);
-		setScreen(loadingScreen);
+		manager.load("player.png", Texture.class);
+		loginScreen=new LoginScreen(this,actionResolver);
+		setScreen(loginScreen);
 	}
 
+	public void goToMenuScreen() {
+		cargarRecursos();
+		menuScreen=new MenuScreen(this);
+		setScreen(menuScreen);
+	}
 	private void cargarRecursos() {
 		manager.load("logo.png", Texture.class);
 		manager.load("abc/A.png",Texture.class);
@@ -86,13 +91,5 @@ public class AbcGameMain extends Game {
 		manager.load("abc/X.png",Texture.class);
 		manager.load("abc/Y.png",Texture.class);
 		manager.load("abc/Z.png",Texture.class);
-
-
-	}
-
-	public void goToLogin() {
-		loginScreen=new LoginScreen(this);
-		menuScreen=new MenuScreen(this);
-		setScreen(menuScreen);
 	}
 }
