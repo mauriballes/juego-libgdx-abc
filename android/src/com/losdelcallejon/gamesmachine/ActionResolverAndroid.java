@@ -95,6 +95,37 @@ public class ActionResolverAndroid implements ActionResolver {
     }
 
     @Override
+    public void insertarUnidad(int i, int nivel, String nombre, String descripcion) {
+        bd.OpenDatabase();
+        bd.insertarUnidades(i,nivel,nombre,descripcion);
+        bd.CloseDatabase();
+    }
+
+    @Override
+    public int obtenerIdUnidad(String nombreUnidad) {
+        bd.OpenDatabase();
+        int i = bd.obtenerIdUnidad(nombreUnidad);
+        bd.CloseDatabase();
+        return i;
+    }
+
+    @Override
+    public void insertarPalabra(int i, String letra, int id_unidad) {
+        bd.OpenDatabase();
+        bd.insertarPalabras(i,letra,id_unidad);
+        bd.CloseDatabase();
+    }
+
+    @Override
+    public String obtenerMongoId() {
+        bd.OpenDatabase();
+        String b = this.bd.obtenerMongoId();
+        bd.CloseDatabase();
+        return b;
+    }
+
+
+    @Override
     public String obtenerResponse() {
         return getResponse();
     }
@@ -124,9 +155,9 @@ public class ActionResolverAndroid implements ActionResolver {
     }
 
     @Override
-    public void insertarUsuario(String nombre, String sexo) {
+    public void insertarUsuario(String nombre, String sexo,String mongo_id) {
     bd.OpenDatabase();
-    bd.insertarUsuario(1,nombre,sexo);
+    bd.insertarUsuario(1,nombre,sexo,mongo_id);
     bd.CloseDatabase();
     }
 

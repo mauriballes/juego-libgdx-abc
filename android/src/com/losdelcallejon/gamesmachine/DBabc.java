@@ -30,7 +30,8 @@ public class DBabc extends SQLiteOpenHelper {
            String Sql = "CREATE TABLE usuarios(" +
                    "id INTEGER," +
                    "username VARCHAR(100)," +
-                   "sexo VARCHAR(100))";
+                   "sexo VARCHAR(100),"+
+                   "mongo_id VARCHAR(100))";
            sqLiteDatabase.execSQL(Sql);
            Sql = "CREATE TABLE unidades(" +
                    "id INTEGER," +
@@ -75,29 +76,29 @@ public class DBabc extends SQLiteOpenHelper {
     }
 
 
-    public void insertarUsuario(int id,String username,String sexo)
+    public void insertarUsuario(int id,String username,String sexo,String mongo_id)
     {
-        String sentencia="INSERT INTO usuarios (id,username,sexo) VALUES ("
-                + id +",'"+ username + "','"+sexo+"')";
+        String sentencia="INSERT INTO usuarios (id,username,sexo,mongo_id) VALUES ("
+                + id +",'"+ username + "','"+sexo+"','"+mongo_id+"')";
         DB.execSQL(sentencia);
     }
     public void insertarUnidades(int id,int nivel,String nombre,String descripcion)
     {
-        String sentencia="INSERT INTO productos (id,nivel,nombre,descripcion) VALUES ("
+        String sentencia="INSERT INTO unidades (id,nivel,nombre,descripcion) VALUES ("
                 + id +","+ nivel +",'"+nombre+"','"+descripcion+"')";
         DB.execSQL(sentencia);
     }
 
     public void insertarPalabras(int id,String letras,int unidad_id)
     {
-        String sentencia="INSERT INTO productos (id,letras,unidad_id) VALUES ("
+        String sentencia="INSERT INTO palabras (id,letra,unidad_id) VALUES ("
                 + id + ",'"+letras+"',"+unidad_id+")";
         DB.execSQL(sentencia);
     }
 
     public void insertarCursados(int id,String fecha,int unidad_id)
     {
-        String sentencia="INSERT INTO productos (id,fecha,unidad_id) VALUES ("
+        String sentencia="INSERT INTO cursados (id,fecha,unidad_id) VALUES ("
                 + id + ",'"+fecha+"',"+unidad_id+")";
         DB.execSQL(sentencia);
     }
@@ -161,35 +162,21 @@ public class DBabc extends SQLiteOpenHelper {
         }
         return null;
     }
-
-    public List<MUnidades> obtenerListUnidades(){
+    public int obtenerIdUnidad(String nombreUnidad) {
         String s = "";
-        List<MUnidades> list = new ArrayList<>();
-        Cursor c = DB.rawQuery("SELECT * FROM unidades ORDER BY "+2, null);
-        if (c.moveToNext()) {
-            MUnidades unidad = new MUnidades(
-                    c.getInt(0),
-                    c.getInt(1),
-                    c.getString(2),
-                    c.getString(3)
-            );
-            list.add(unidad);
+        Cursor c = DB.rawQuery("SELECT * FROM unidades where nombre='"+nombreUnidad+"'", null);
+        if (c.moveToFirst()) {
+            return c.getInt(2);
         }
-        return list;
+        return -1;
     }
 
-    public List<MCursados> obtenerListUnidadesCursadas(){
+    public String obtenerMongoId() {
         String s = "";
-        List<MCursados> list = new ArrayList<>();
-        Cursor c = DB.rawQuery("SELECT * FROM cursados WHERE id=" + getIdUsuario(), null);
-        if (c.moveToNext()) {
-            MCursados cursados = new MCursados(
-                    c.getInt(0),
-                    c.getString(1),
-                    c.getInt(2)
-            );
-            list.add(cursados);
+        Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
+        if (c.moveToFirst()) {
+            return c.getString(3);
         }
-        return list;
+        return null;
     }
 }
