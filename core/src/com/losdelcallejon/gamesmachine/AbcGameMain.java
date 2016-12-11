@@ -63,7 +63,10 @@ public class AbcGameMain extends Game {
 		setScreen(menuScreen);
 	}
 	private void cargarRecursos() {
-		manager.load("logo.png", Texture.class);
+		manager.load("monoplayer.jpg", Texture.class);
+		manager.load("multiplayer.png", Texture.class);
+		manager.load("overfloor.png", Texture.class);
+		manager.load("buscando.jpeg", Texture.class);
 		manager.load("abc/A.png",Texture.class);
 		manager.load("abc/B.png",Texture.class);
 		manager.load("abc/C.png",Texture.class);

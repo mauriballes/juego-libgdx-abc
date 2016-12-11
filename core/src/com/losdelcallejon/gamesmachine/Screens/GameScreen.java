@@ -72,8 +72,8 @@ public class GameScreen extends BaseScreen {
         Socket socket =game.socket;
         /// Ya sea mono o multijugador necesitamos tener la primer palabra
         /// asi que debemos registrar el evento que pueda generar el servidor para mandarnos la palabra
-        socket.on(Constants.GET_PALABRA_NIVEL,this);
-
+        socket.on(Constants.GET_NEXT_PALABRA,this);
+        //decirle al servidor que mande nueva palabra
         if(!isMultiplayer) //Todo registrar eventos que vaya necesitar el mono jugador
         {
 
@@ -162,8 +162,18 @@ public class GameScreen extends BaseScreen {
        Integer id= (Integer) args[0];
         switch (id)
         {
-            case Constants.GET_PALABRA_NIVEL_RESPUESTA:
-                ///Todo Procesar palabra en la pantalla del juego
+            case Constants.GET_NEXT_PALABRA_RESPUESTA:
+                if(isMultiplayer)
+                {
+
+                }else
+                {
+
+                }
+                break;
+            case Constants.LETRA_PULSADA_RESPUESTA:
+                break;
+            case Constants.RENDERIZAR_LETRAS_POSICIONES_RESPUESTA:
                 break;
         }
     }

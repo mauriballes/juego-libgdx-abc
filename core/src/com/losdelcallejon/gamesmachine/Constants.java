@@ -10,15 +10,16 @@ public class Constants {
     public static final String SOCKET_URL="http://abcsocket.cf";
     public static final String GET_USER_EVENT="getUser";
     public static final String EJEMPLO_EVENTO="ESTO_ES_UN_EJEMPLO";
-    public static final String GET_PALABRA_NIVEL="getNextWord";
+    public static final String GET_NEXT_PALABRA="getNextWord";
     public static final String UPDATE_OPONENTE="updateOponente";
     public static final String LETRA_PULSADA ="A" ;
     public static final String RENDERIZAR_LETRAS_POSICIONES="B";
     public static final String PALABRA_ACABADA = "C";
 
     ///Recepcionar respuestas
-    public static final int GET_PALABRA_NIVEL_RESPUESTA=0;
-    public static final int UPDATE_OPONENTE_RESPUESTA=1;
+    public static final int GET_NEXT_PALABRA_RESPUESTA=0;
+    public static final int LETRA_PULSADA_RESPUESTA=1;
+    public static final int RENDERIZAR_LETRAS_POSICIONES_RESPUESTA=2;
 
 
 

@@ -27,6 +27,7 @@ public class AbcController {
     private AssetManager assetManager;
     private String miPuntaje;
     private int elQueToca;
+
     public AbcController(HashMap<String, String> abecedario, String palabra, ArrayList<Letra> letraList, Stage stage, World world, AssetManager assetManager) {
         Abecedario = abecedario;
         this.palabra = palabra;
@@ -89,7 +90,7 @@ public class AbcController {
 
     public ArrayList<Integer> generarLetras()
     {
-        int cant=cantidadPalabras();
+        int cant=generarCantidadLetras();
         ArrayList<Integer> arrayList=new ArrayList<Integer>();
         Random r = new Random();
         for(int i=0;i<cant;i++)
@@ -125,7 +126,7 @@ public class AbcController {
         return t;
     }
 
-    private int cantidadPalabras() {
+    private int generarCantidadLetras() {
         Random r = new Random();
         int t = r.nextInt(10 - 5) + 5;
         return t;
