@@ -24,7 +24,7 @@ public class MenuScreen extends BaseScreen {
         //LO PODES SETTEAR AQUI EL USUARIO O DONDE SEA PERO LA CUESTION ES QUE EN LA PANTALLA
         // GameScreen lo usare por law
         game.usuarioId=EJEMPLO_USUARIO;
-        GameScreen gameScreen=new GameScreen(game,EJEMPLO_NIVEL,false);
+        GameScreen gameScreen=new GameScreen(game,EJEMPLO_NIVEL,false,true);
         game.setScreen(gameScreen);
     }
 }

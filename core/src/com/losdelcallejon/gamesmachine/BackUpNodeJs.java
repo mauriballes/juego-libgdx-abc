@@ -59,8 +59,78 @@ public class BackUpNodeJs extends ApplicationAdapter {
                 Gdx.app.log("SocketIO","Connected");
                 player= new Starship(playerShip);
             }
+        }).on("socketID", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data= (JSONObject) args[0];
+                try {
+                    id = data.getString("id");
+                    Gdx.app.log("SocketIO","My Id: "+id);
+                } catch (JSONException e) {
+                    Gdx.app.log("SocketIO",e.getMessage());
+                }
+            }
+        }).on("newPlayer", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data= (JSONObject) args[0];
+                try {
+                    String id = data.getString("id");
+                    Gdx.app.log("SocketIO","New Player Connected: "+id);
+                    friendlyPlayers.put(id,new Starship(friendlyShip));
+                } catch (JSONException e) {
+                    Gdx.app.log("SocketIO",e.getMessage());
+                }
+            }
+        }).on("playerDisconnected", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data= (JSONObject) args[0];
+                try {
+                    String id = data.getString("id");
+                    friendlyPlayers.remove(id);
+                } catch (JSONException e) {
+                    Gdx.app.log("SocketIO",e.getMessage());
+                }
+            }
+        }).on("playerMoved", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data= (JSONObject) args[0];
+                try {
+                    String playerId = data.getString("id");
+                    Double x = data.getDouble("x");
+                    Double y = data.getDouble("y");
+                    if(friendlyPlayers.get(playerId)!=null)
+                    {
+                        friendlyPlayers.get(playerId).setPosition(x.floatValue(),y.floatValue());
+                    }
+                } catch (JSONException e) {
+                    Gdx.app.log("SocketIO",e.getMessage());
+                }
+            }
+        }).on("getPlayers", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try{
+                    JSONArray objects = (JSONArray) args[0];
+                    for(int i=0;i<objects.length();i++)
+                    {
+                        Starship coopPlayer= new Starship(friendlyShip);
+                        Vector2 position =new Vector2();
+                        position.x = ((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
+                        position.y = ((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
+                        coopPlayer.setPosition(position.x,position.y);
+                        friendlyPlayers.put(objects.getJSONObject(i).getString("id"),coopPlayer);
+                    }
+                }catch (Exception e)
+                {
+
+                }
+            }
         });
     }
+
     @Override
     public void render () {
         Gdx.gl.glClearColor(1, 0, 0, 1);
