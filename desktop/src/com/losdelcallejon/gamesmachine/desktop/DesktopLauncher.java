@@ -8,6 +8,6 @@ import com.losdelcallejon.gamesmachine.AbcGameMain;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new AbcGameMain(), config);
+		new LwjglApplication(new AbcGameMain(null), config);
 	}
 }
