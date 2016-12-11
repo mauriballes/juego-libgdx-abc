@@ -2,22 +2,23 @@ package com.losdelcallejon.gamesmachine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class AndroidLauncher extends AndroidApplication implements TextToSpeech.OnInitListener {
     public static final int REQUEST_SPEECH = 1;
+    private boolean yaCargoTTS=false;
 
     ActionResolverAndroid actionResolver;
-    //	SpeechGDX speechGDX;
-    //	TTSGDX ttsgdx;
-
 
     protected TextToSpeech myTTS;
     //status check code
@@ -29,6 +30,7 @@ public class AndroidLauncher extends AndroidApplication implements TextToSpeech.
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        checkTTSIntent.putExtra("popup",false);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
         actionResolver = new ActionResolverAndroid(this);
@@ -43,21 +45,21 @@ public class AndroidLauncher extends AndroidApplication implements TextToSpeech.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-//        if (requestCode == REQUEST_SPEECH && resultCode == RESULT_OK) {
-//            // Get the spoken sentence..
-//            ArrayList<String> thingsYouSaid =
-//                    data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//
-//            // ..and pass it to the textField:
-//            speechGDX.setTextFieldText(thingsYouSaid.get(0));
-//            Gdx.app.log("you said: ", thingsYouSaid.get(0));
-//        }
+        if (data.getExtras().getBoolean("popup")|| yaCargoTTS) {
+            if (requestCode == REQUEST_SPEECH && resultCode == RESULT_OK) {
+                // Get the spoken sentence..
+                ArrayList<String> thingsYouSaid =
+                        data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        actionResolver.setResponse(thingsYouSaid.get(0));
+            }
+        }
 
-        if (requestCode == MY_DATA_CHECK_CODE) {
+        if (requestCode == MY_DATA_CHECK_CODE && !yaCargoTTS) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 //the user has the necessary data - create the TTS
                 myTTS = new TextToSpeech(this, this);
                 actionResolver.setTts(myTTS);
+                yaCargoTTS = true;
             }
             else {
                 //no data - install it now

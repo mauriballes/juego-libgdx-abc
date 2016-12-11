@@ -19,10 +19,14 @@ public class ActionResolverAndroid implements ActionResolver {
 
     Handler uiThread;
     Context appContext;
+    DBabc bd;
     TextToSpeech tts;
+    String response="";
     public ActionResolverAndroid(Context appContext) {
         uiThread = new Handler();
         this.appContext = appContext;
+        bd = new DBabc(this.appContext,"abc.db", null, 1);
+        this.showToast("LA BD esta funcionando Bien",5000);
     }
 
     @Override
@@ -42,6 +46,7 @@ public class ActionResolverAndroid implements ActionResolver {
             public void run() {
                 Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
+                i.putExtra("popup",true);
                 try {
                     // We open the Speech dialog here using a request code
                     // and retrieve the spoken text in AndroidLauncher's onActivityResult().
@@ -66,7 +71,37 @@ public class ActionResolverAndroid implements ActionResolver {
         });
     }
 
+    @Override
+    public boolean esNuevoUsuario() {
+
+        bd.OpenDatabase();
+        boolean b = this.bd.esNuevoUsuario();
+        bd.CloseDatabase();
+        return b;
+    }
+
+    @Override
+    public String obtenerResponse() {
+        return getResponse();
+    }
+
+    @Override
+    public String obtenerNombreUsuario() {
+        bd.OpenDatabase();
+        String b = this.bd.obtenerNombreUsuario();
+        bd.CloseDatabase();
+        return b;
+    }
+
     public void setTts(TextToSpeech tts) {
         this.tts = tts;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 }
