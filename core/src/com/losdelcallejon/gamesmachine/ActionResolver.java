@@ -11,4 +11,9 @@ public interface ActionResolver {
     public boolean esNuevoUsuario();
     public String obtenerResponse();
     public String obtenerNombreUsuario();
+    public int obtenerUsuarioID();
+
+    public String obtenerSexoUsuario();
+
+    public void insertarUsuario(String nombre, String sexo);
 }

@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.losdelcallejon.gamesmachine.ActionResolver;
+
 /**
  * Created by HP on 09/12/2016.
  */
@@ -29,8 +31,13 @@ public class MenuScreen extends BaseScreen {
     boolean esMultijugador;
     int nivel;
 
-    public MenuScreen(AbcGameMain g) {
+    private String sexo;
+    private ActionResolver actionResolver;
+
+    public MenuScreen(AbcGameMain g, String sexo, final ActionResolver actionResolver) {
         super(g);
+        this.sexo = sexo;
+        this.actionResolver = actionResolver;
         esMultijugador=false;
         nivel=-1;
         this.interfazGrafica=new Stage(new FitViewport(640, 360));
@@ -91,7 +98,11 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
+        if (this.sexo.equals("M")){
+            Gdx.gl.glClearColor(0f,0f,1f,1f);
+        }else{
+            Gdx.gl.glClearColor(1f,0.43f,0.78f,1f);
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         interfazGrafica.act();
         interfazGrafica.draw();

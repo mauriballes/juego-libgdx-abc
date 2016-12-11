@@ -23,6 +23,7 @@ public class DBabc extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
            String Sql = "CREATE TABLE usuarios(" +
                    "id INTEGER," +
+                   "username VARCHAR(100),"+
                    "sexo VARCHAR(100))";
            sqLiteDatabase.execSQL(Sql);
            Sql = "CREATE TABLE unidades(" +
@@ -67,10 +68,10 @@ public class DBabc extends SQLiteOpenHelper {
         DB.close();
     }
 
-    public void insertarUsuario(int id,String sexo)
+    public void insertarUsuario(int id,String username,String sexo)
     {
-        String sentencia="INSERT INTO productos (id,sexo) VALUES ("
-                + id + ",'"+sexo+"')";
+        String sentencia="INSERT INTO usuarios (id,username,sexo) VALUES ("
+                + 1 +",'"+ username + "','"+sexo+"')";
         DB.execSQL(sentencia);
     }
     public void insertarUnidades(int id,int nivel,String nombre,String descripcion)
@@ -108,6 +109,24 @@ public class DBabc extends SQLiteOpenHelper {
         Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
         if (c.moveToFirst()) {
             return c.getString(1);
+        }
+        return null;
+    }
+
+    public int obtenerUsuarioID() {
+        int s=-1;
+        Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        return s;
+    }
+
+    public String obtenerSexoUsuario() {
+        String s = "";
+        Cursor c = DB.rawQuery("SELECT * FROM usuarios", null);
+        if (c.moveToFirst()) {
+            return c.getString(2);
         }
         return null;
     }
