@@ -19,5 +19,5 @@ public interface ActionResolver {
     public String obtenerSexoUsuario();
 
     public void insertarUsuario(String nombre, String sexo);
-
+    public List<Integer> obtenerUnidadesDelUsuario();
 }
