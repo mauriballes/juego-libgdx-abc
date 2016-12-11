@@ -55,23 +55,16 @@ public class AbcGameMain extends Game {
 		manager=new AssetManager();
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
-		//manager.load("player.png", Texture.class);
-		//loginScreen=new LoginScreen(this,actionResolver);
-		//setScreen(loginScreen);
-		cargarRecursos();
-		while(!getManager().update());
-		try {
-			Thread.sleep(8000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		GameScreen gameScreen=new GameScreen(this,1,false,true,Constants.DummyFactoryWords());
-		setScreen(gameScreen);
+		goToMenuScreen();
+//		manager.load("player.png", Texture.class);
+//		loginScreen=new LoginScreen(this,actionResolver);
+//		setScreen(loginScreen);
 	}
 
 	public void goToMenuScreen() {
 		cargarRecursos();
-		menuScreen=new MenuScreen(this);
+		menuScreen=new MenuScreen(this,actionResolver);
+		while(!getManager().update());
 		setScreen(menuScreen);
 	}
 	private void cargarRecursos() {
@@ -80,7 +73,9 @@ public class AbcGameMain extends Game {
 		manager.load("multiplayer.png", Texture.class);
 		manager.load("overfloor.png", Texture.class);
 		manager.load("buscando.jpeg", Texture.class);
-		manager.load("fondogame.jpg", Texture.class);
+		manager.load("learn.png",Texture.class);
+		manager.load("lion.png",Texture.class);
+		manager.load("play.png",Texture.class);
 		manager.load("abc/A.png",Texture.class);
 		manager.load("abc/B.png",Texture.class);
 		manager.load("abc/C.png",Texture.class);

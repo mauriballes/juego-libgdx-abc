@@ -8,4 +8,7 @@ public interface ActionResolver {
     public void showToast(CharSequence toastMessage, int toastDuration);
     public void showSpeechPopup();
     public void tryTTS(String text);
+    public boolean esNuevoUsuario();
+    public String obtenerResponse();
+    public String obtenerNombreUsuario();
 }

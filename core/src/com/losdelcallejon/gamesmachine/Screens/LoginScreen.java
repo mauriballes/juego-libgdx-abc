@@ -15,6 +15,8 @@ import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.losdelcallejon.gamesmachine.ActionResolver;
 import com.losdelcallejon.gamesmachine.Constants;
 
+import io.socket.emitter.Emitter;
+
 /**
  * Created by HP on 09/12/2016.
  */
@@ -23,25 +25,89 @@ public class LoginScreen extends BaseScreen {
     ActionResolver actionResolver;
 
     private Stage stage;
-   // private Skin skin;
+    private String nombre,sexo;
     private FondoLogin fl;
     public LoginScreen(AbcGameMain g,ActionResolver actionResolver) {
         super(g);
         this.actionResolver = actionResolver;
         gl = Gdx.app.getGraphics().getGL20();
         stage = new Stage(new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-       // skin = new Skin(Gdx.files.internal("Scene2D/uiskin.json"));
-
         Gdx.input.setInputProcessor(stage);
         fl = new FondoLogin();
-
-        fl.setPosition(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-
+        fl.setPosition(Gdx.graphics.getWidth()/4,0);
         stage.addActor(fl);
-
-        //EJEMPLO DE COMO REGISTRAR EVENTOS
-         //game.socket.on(Constants.EJEMPLO_EVENTO,this);
+        Thread loginThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EjecutarLogin();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        loginThread.start();
     }
+
+    private void EjecutarLogin() throws InterruptedException {
+        if (actionResolver.esNuevoUsuario()){
+            while(true) {
+                actionResolver.tryTTS("Bienvenido, cual es tu nombre?");
+                Thread.sleep(3000);
+                actionResolver.showSpeechPopup();
+                Thread.sleep(4000);
+                String nombre1 = actionResolver.obtenerResponse();
+                actionResolver.tryTTS("Confirma tu nombre por favor");
+                Thread.sleep(3000);
+                actionResolver.showSpeechPopup();
+                Thread.sleep(4000);
+                String nombre2 = actionResolver.obtenerResponse();
+                if (nombre1.equals(nombre2)) {
+                    actionResolver.tryTTS("Confirmado "+nombre1);
+                    this.nombre = nombre1;
+                    Thread.sleep(3000);
+                    while(true) {
+                        actionResolver.tryTTS("Eres niño o niña?");
+                        Thread.sleep(3000);
+                        actionResolver.showSpeechPopup();
+                        Thread.sleep(4000);
+                        String sexo = actionResolver.obtenerResponse();
+                        if (sexo.equals("niño") || sexo.equals("niña")) {
+                            if (sexo.equals("niño")){
+                                this.sexo="M";
+                            }else{
+                                this.sexo="N";
+                            }
+                            break;
+                        } else {
+                            actionResolver.tryTTS("Vuelve a intentarlo por favor");
+                            Thread.sleep(3000);
+                        }
+                    }
+                    break;
+                } else {
+                    actionResolver.tryTTS("Los nombres no coinciden vuelve a intentarlo por favor");
+                    Thread.sleep(3000);
+                }
+            }
+            if (sexo.equals("M")){
+                actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres un niño");
+            }else{
+                actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres una niña");
+            }
+            //EJEMPLO DE COMO REGISTRAR EVENTOS
+            game.socket.on(Constants.EJEMPLO_EVENTO, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+
+                }
+            });
+        }else{
+            this.nombre = actionResolver.obtenerNombreUsuario();
+            actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tus progeso por favor");
+        }
+    }
+
     public class FondoLogin extends Actor {
         Texture texture = new Texture(Gdx.files.internal("ABC.png"));
 
@@ -58,9 +124,6 @@ public class LoginScreen extends BaseScreen {
     }
     @Override
     public void show() {
-
-      //game.goToMenuScreen();
-
     }
 
     @Override
@@ -84,5 +147,6 @@ public class LoginScreen extends BaseScreen {
     public void call(Object... args) {
 
         // UI SE CAPTURAN LOS EVENTOS Y CON PUROS IF EJECUTAMOS DISTINTAS ACCIONES TENEMOS QUE PONERNOS DE ACUERDO CON MAURICIO
+        // game.socket.on()
     }
 }
