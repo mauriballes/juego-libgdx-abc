@@ -4,16 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.losdelcallejon.gamesmachine.ActionResolver;
 import com.losdelcallejon.gamesmachine.Constants;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.socket.emitter.Emitter;
 
@@ -21,12 +27,14 @@ import io.socket.emitter.Emitter;
  * Created by HP on 09/12/2016.
  */
 public class LoginScreen extends BaseScreen {
+    public static  float DURATION = 6.0f;
     GL20 gl;
     ActionResolver actionResolver;
 
     private Stage stage;
     private String nombre,sexo;
     private FondoLogin fl;
+    private boolean endHilo = false;
     public LoginScreen(AbcGameMain g,ActionResolver actionResolver) {
         super(g);
         this.actionResolver = actionResolver;
@@ -36,6 +44,7 @@ public class LoginScreen extends BaseScreen {
         fl = new FondoLogin();
         fl.setPosition(Gdx.graphics.getWidth()/4,0);
         stage.addActor(fl);
+        game.socket.on(Constants.IDENTIFY_RES,this);
         Thread loginThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -62,21 +71,24 @@ public class LoginScreen extends BaseScreen {
                 actionResolver.showSpeechPopup();
                 Thread.sleep(4000);
                 String nombre2 = actionResolver.obtenerResponse();
+//                String nombre1="hola";
+//                String nombre2="hola";
                 if (nombre1.equals(nombre2)) {
                     actionResolver.tryTTS("Confirmado "+nombre1);
                     this.nombre = nombre1;
                     Thread.sleep(3000);
                     while(true) {
-                        actionResolver.tryTTS("Eres niño o niña?");
+                        actionResolver.tryTTS("Eres hombre o mujer?");
                         Thread.sleep(3000);
                         actionResolver.showSpeechPopup();
                         Thread.sleep(4000);
                         String sexo = actionResolver.obtenerResponse();
-                        if (sexo.equals("niño") || sexo.equals("niña")) {
-                            if (sexo.equals("niño")){
+                      //  String sexo = "niño";
+                        if (sexo.equals("hombre") || sexo.equals("mujer")) {
+                            if (sexo.equals("hombre")){
                                 this.sexo="M";
                             }else{
-                                this.sexo="N";
+                                this.sexo="F";
                             }
                             break;
                         } else {
@@ -90,21 +102,29 @@ public class LoginScreen extends BaseScreen {
                     Thread.sleep(3000);
                 }
             }
-            if (sexo.equals("M")){
-                actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres un niño");
-            }else{
-                actionResolver.tryTTS("tu nombre es "+this.nombre+" y eres una niña");
-            }
-            //EJEMPLO DE COMO REGISTRAR EVENTOS
-            game.socket.on(Constants.EJEMPLO_EVENTO, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("username",this.nombre);
+                data.put("sexo",this.sexo);
+                game.socket.emit("identify",data);
 
-                }
-            });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }else{
             this.nombre = actionResolver.obtenerNombreUsuario();
-            actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tus progeso por favor");
+            this.sexo = actionResolver.obtenerSexoUsuario();
+           actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tu progreso por favor");
+
+
+            JSONObject data = new JSONObject();
+            try {
+                data.put("user_id",actionResolver.obtenerMongoId());
+                game.socket.emit("identify",data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -124,6 +144,7 @@ public class LoginScreen extends BaseScreen {
     }
     @Override
     public void show() {
+
     }
 
     @Override
@@ -132,21 +153,76 @@ public class LoginScreen extends BaseScreen {
         gl.glClearColor(0.7f, 0.7f, 0.7f, 1);
         gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
+        if (endHilo){
+            endHilo=false;
+            stage.addAction(
+                    Actions.sequence(
+                            Actions.delay(DURATION),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    game.goToMenuScreen(sexo);
+                                }
+                            })
+                    )
+            );
+        }
         stage.draw();
-        // EJEMPLO DE COMO MANDAR UN EJEMPLO AL SERVIDOR
-       // game.socket.emit(Constants.EJEMPLO_EVENTO,Object);
     }
 
+//    @Override
+//    public void dispose() {
+////        super.dispose();
+//        stage.dispose();
+//    }
+
     @Override
-    public void dispose() {
-        super.dispose();
+    public void hide() {
         stage.dispose();
     }
 
     @Override
     public void call(Object... args) {
+        JSONObject data = (JSONObject) args[0];
+        String evt="";
+        try {
+            evt = data.get("evento").toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        // UI SE CAPTURAN LOS EVENTOS Y CON PUROS IF EJECUTAMOS DISTINTAS ACCIONES TENEMOS QUE PONERNOS DE ACUERDO CON MAURICIO
-        // game.socket.on()
+        switch (evt){
+            case "identifyRes":
+                try {
+                    JSONObject cliente = data.getJSONObject("cliente");
+                    actionResolver.insertarUsuario(this.nombre,this.sexo,cliente.getString("_id"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    JSONArray arrayUnidades = data.getJSONArray("unidades");
+                    for (int i = 0; i < arrayUnidades.length(); i++) {
+                       String descripcion = arrayUnidades.getJSONObject(i).getString("descripcion");
+                       String nombre = arrayUnidades.getJSONObject(i).getString("nombre");
+                       int nivel = arrayUnidades.getJSONObject(i).getInt("nivel");
+                       actionResolver.insertarUnidad(i,nivel,nombre,descripcion);
+                    }
+                    JSONArray arrayPalabras = data.getJSONArray("palabras");
+                    for (int i = 0; i < arrayPalabras.length(); i++) {
+                    String letra = arrayPalabras.getJSONObject(i).getString("letras");
+                    String nombreUnidad = arrayPalabras.getJSONObject(i).getJSONObject("unidad").getString("nombre");
+                    int id_unidad = actionResolver.obtenerIdUnidad(nombreUnidad);
+                    actionResolver.insertarPalabra(i,letra,id_unidad);
+                        DURATION = 1.0f;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                endHilo = true;
+                actionResolver.showToast("cargo db",3000);
+
+                break;
+        }
     }
 }

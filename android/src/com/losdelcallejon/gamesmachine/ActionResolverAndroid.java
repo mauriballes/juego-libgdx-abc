@@ -9,6 +9,11 @@ import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
+import com.losdelcallejon.gamesmachine.Models.MCursados;
+import com.losdelcallejon.gamesmachine.Models.MUnidades;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ricardo Justiniano on 10-Dec-16.
@@ -81,6 +86,46 @@ public class ActionResolverAndroid implements ActionResolver {
     }
 
     @Override
+    public List<Integer> obtenerUnidadesDelUsuario() {
+        bd.OpenDatabase();
+        List<Integer> lista ;
+        lista = bd.obtenerUnidadesDelUsuario();
+        bd.CloseDatabase();
+        return lista;
+    }
+
+    @Override
+    public void insertarUnidad(int i, int nivel, String nombre, String descripcion) {
+        bd.OpenDatabase();
+        bd.insertarUnidades(i,nivel,nombre,descripcion);
+        bd.CloseDatabase();
+    }
+
+    @Override
+    public int obtenerIdUnidad(String nombreUnidad) {
+        bd.OpenDatabase();
+        int i = bd.obtenerIdUnidad(nombreUnidad);
+        bd.CloseDatabase();
+        return i;
+    }
+
+    @Override
+    public void insertarPalabra(int i, String letra, int id_unidad) {
+        bd.OpenDatabase();
+        bd.insertarPalabras(i,letra,id_unidad);
+        bd.CloseDatabase();
+    }
+
+    @Override
+    public String obtenerMongoId() {
+        bd.OpenDatabase();
+        String b = this.bd.obtenerMongoId();
+        bd.CloseDatabase();
+        return b;
+    }
+
+
+    @Override
     public String obtenerResponse() {
         return getResponse();
     }
@@ -91,6 +136,47 @@ public class ActionResolverAndroid implements ActionResolver {
         String b = this.bd.obtenerNombreUsuario();
         bd.CloseDatabase();
         return b;
+    }
+
+    @Override
+    public int obtenerUsuarioID() {
+        bd.OpenDatabase();
+        int b = this.bd.obtenerUsuarioID();
+        bd.CloseDatabase();
+        return b;
+    }
+
+    @Override
+    public String obtenerSexoUsuario() {
+        bd.OpenDatabase();
+        String b = this.bd.obtenerSexoUsuario();
+        bd.CloseDatabase();
+        return b;
+    }
+
+    @Override
+    public void insertarUsuario(String nombre, String sexo,String mongo_id) {
+    bd.OpenDatabase();
+    bd.insertarUsuario(1,nombre,sexo,mongo_id);
+    bd.CloseDatabase();
+    }
+
+    @Override
+    public List<MCursados> obtenerListUnidadesCursadas() {
+        bd.OpenDatabase();
+        List<MCursados> lista;
+        lista = bd.obtenerListUnidadesCursadas();
+        bd.CloseDatabase();
+        return lista;
+    }
+
+    @Override
+    public List<MUnidades> obtenerListUnidades() {
+        bd.OpenDatabase();
+        List<MUnidades> lista;
+        lista = bd.obtenerListUnidades();
+        bd.CloseDatabase();
+        return lista;
     }
 
     public void setTts(TextToSpeech tts) {
