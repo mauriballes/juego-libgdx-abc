@@ -25,8 +25,8 @@ public class Letra extends Actor {
 
     private static float velocidadBajada;
     public ControlVirtual tecladoVirtual;
-
-    public Letra(World world, Texture texture, Vector2 position, ControlVirtual tecladoVirtual)
+    public String iden;
+    public Letra(World world, Texture texture, Vector2 position, ControlVirtual tecladoVirtual,String ide)
     {
         this.world=world;
         this.texture=texture;
@@ -38,13 +38,14 @@ public class Letra extends Actor {
         PolygonShape letraShape= new PolygonShape();
         letraShape.setAsBox(0.5f,0.5f);
         fixture= body.createFixture(letraShape,3);
-        fixture.setUserData("Letra");
+        iden=ide;
         letraShape.dispose();
         setSize(Constants.PIXELS_IN_METER*1,Constants.PIXELS_IN_METER*1);
         velocidadBajada=generarVelocidadBajada()*1.07f;
         this.tecladoVirtual=tecladoVirtual;
     }
 
+    public String getUserData(){return iden;}
     public Body getBody()
     {
         return body;

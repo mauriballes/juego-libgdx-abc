@@ -5,6 +5,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -13,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -42,24 +45,21 @@ public class GameScreen extends BaseScreen {
     HashMap<String,String> Abecedario;
     private String palabra;
     private ArrayList<Letra> letraList;
-
-
-
+    int puntos;
+    private int misPalabrasTerminadas;
     private Stage stage;
     private Stage stageFondo;
     private World world;
     private AbcController abcController;
-    private Label puntaje;
-    private Image cargando;
     private Image fondo;
-    private Stage stageCargando;
-    private Skin skin;
     private Music bgMusic;
     private ActionResolver actionResolver;
     String OponenteName;
     ArrayList<String> palabras;
     int idPartida;
-    boolean sePuedenCaer;
+    String eliminaLetra;
+    private String finalizo;
+
     public GameScreen(AbcGameMain g,int unidad,boolean isMultiPlayer,boolean esCreador,ArrayList<String> palabras,ActionResolver actionResolver,String Oponent,int idPartida) {
             super(g);
             this.actionResolver=actionResolver;
@@ -69,7 +69,11 @@ public class GameScreen extends BaseScreen {
             this.esCreador = esCreador;
             this.palabras=palabras;
             this.idPartida=idPartida;
-            this.sePuedenCaer=false;
+            this.eliminaLetra="-1";
+            this.finalizo="-1";
+            this.puntos=0;
+            this.misPalabrasTerminadas=0;
+
     }
     public void init() {
 
@@ -84,17 +88,12 @@ public class GameScreen extends BaseScreen {
             this.stageFondo=new Stage(new FitViewport(1600,900));
             this.world = new World(new Vector2(0, -0.8f), true);
             palabra = palabras.get(0);
-            skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
             bgMusic=game.getManager().get("audio/song.ogg");
             fondo=new Image(game.getManager().get("fondogame.jpg",Texture.class));
-            puntaje = new Label(palabra, skin);
-            puntaje.setSize(300, 150);
-            puntaje.setPosition(0, 0);
             fondo.setPosition(0,0);
             this.stageFondo.addActor(fondo);
-            this.stageFondo.addActor(puntaje);
 
-            stageCargando();
+           // stageCargando();
             this.letraList = new ArrayList<Letra>();
             abcController = new AbcController(Abecedario, palabra, letraList, stage, world, game.getManager(),palabras);
             registrarEventos();
@@ -107,7 +106,7 @@ public class GameScreen extends BaseScreen {
             abcController.cargarRecursosDeLetras(abcController.generarLetras());
         }else       // Si es multijugador hay que ver si es creador de partida o retado
         {
-            game.socket.on(Constants.TOUCHED,this);
+
             if(esCreador) ///Si es el creador de la partida genera los recursos y se lo envia al servidor para que este se lo envie al retador
             {
                 abcController.cargarRecursosDeLetras(abcController.generarLetras());
@@ -128,7 +127,9 @@ public class GameScreen extends BaseScreen {
         {   Socket socket =game.socket;
             // Cuando el oponente envie la tecla que pulso nosotros tenemos que eliminarla tambien de nuestra pantalla
             //socket.on(Constants.LETRA_PULSADA,this);
-           // socket.on(Constants.ENVIAR_PALABRA,this);
+            socket.on(Constants.FINISH_GAME_RES,this);
+            socket.on(Constants.PALABRA_ACABADA_RES,this);
+            socket.on(Constants.TOUCHED_RES,this);
             if(!esCreador) /// Si yo soy el retado
             {
                 //Tengo que renderizar constantemente todas las letras que me envie mi retador, por que el es el creador de la partida
@@ -137,21 +138,15 @@ public class GameScreen extends BaseScreen {
         }
     }
 
-    public void stageCargando()
-    {
-        this.stageCargando=new Stage(new FitViewport(1600, 900));
-        cargando = new Image(game.getManager().get("playerShip.png", Texture.class));
-        cargando.setPosition(440 - cargando.getWidth() / 2, 320 - cargando.getHeight());
-        stageCargando.addActor(cargando);
-    }
-
 
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if(!palabra.equals("")){ // Si hay palabra, el juego continua en mono o multi jugador
+        gestionarFinalizacion();
+        if(finalizo.equals("-1")){
+        purgeLetraList();
             if(!isMultiplayer){     // Si es monojugador
                 abcController.validarCreadorMonoJugador(game.socket);
                 if(abcController.letrasVacias() && !abcController.getPalabra().equals("-1"))
@@ -168,8 +163,8 @@ public class GameScreen extends BaseScreen {
             {
                if(esCreador) // Como yo soy el creador es mi responsabilidad actualizar la pantalla para mi oponente
                 {
-                    //abcController.validarCreador(game.socket,idPartida);
-                    if(abcController.letrasVacias())
+                    abcController.validarCreador(game.socket,idPartida,esCreador);
+                    if(abcController.letrasVacias() && !abcController.getPalabra().equals("-1"))
                     {
 
                         abcController.cargarRecursosDeLetras(abcController.generarLetras());
@@ -178,18 +173,64 @@ public class GameScreen extends BaseScreen {
                     }
                 }else
                 {
-                 // abcController.validarReceptor(game.socket,idPartida);
+                  abcController.validarReceptor(game.socket,idPartida,esCreador);
                 }
             }
-            puntaje.setText(abcController.getMiPuntaje());
-
+            if(abcController.cambioPalabra()){
+                abcController.setCambioPalabra(false);
+                actionResolver.tryTTS(abcController.getPalabra());
+            }
             stageFondo.act();
             stageFondo.draw();
             abcController.pintar(delta);
-        }else  // Si no hay palabra, hay que mostrar una pantalla de carga a la espera de que el servidor envie una o que diga si ya acabo el juego
+        }
+    }
+
+    private void gestionarFinalizacion() {
+        if(isMultiplayer)
         {
-            stageCargando.act();
-            stageCargando.draw();
+            if(!finalizo.equals("-1"))
+            {
+                if(finalizo.equals("Perdedor"))
+                {
+                    int xd=0;
+                    xd++;
+                }
+                actionResolver.showToast(finalizo,3000);
+                finalizo="-1";
+                misPalabrasTerminadas=0;
+                OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver);
+                game.setScreen(menuScreen);
+            }else if(misPalabrasTerminadas>0)
+            {
+                String puntuacion="Tiene "+String.valueOf(puntos)+" Palabras";
+                misPalabrasTerminadas=0;
+                actionResolver.showToast(puntuacion,3000);
+
+            }
+
+        }
+    }
+
+    private void purgeLetraList() {
+        if(isMultiplayer && !this.eliminaLetra.equals("-1"))
+        {   ArrayList<Letra> letrasAuxiliar=new ArrayList<>();
+            for(int i=0;i<abcController.getLetraList().size();i++)
+            {
+                if(eliminaLetra.equals(abcController.getLetraList().get(i).getUserData()))
+                {
+                    abcController.getLetraList().get(i).remove();
+                    abcController.getLetraList().get(i).detach();
+                    letrasAuxiliar.add(abcController.getLetraList().get(i));
+                    eliminaLetra="-1";
+                    break;
+                }
+            }
+            for(int j=0;j<letrasAuxiliar.size();j++)
+            {
+                abcController.getLetraList().remove(letrasAuxiliar.get(j));
+                break;
+            }
         }
     }
 
@@ -208,7 +249,6 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         abcController.dispose();
         stageFondo.dispose();
-        stageCargando.dispose();
     }
 
     @Override
@@ -230,6 +270,25 @@ public class GameScreen extends BaseScreen {
                 //enviar mensaje al oponente que ok
                 break;
             case Constants.TOUCHED_RES:
+                eliminaLetra=parametros.getString("letra");
+                break;
+            case Constants.PALABRA_ACABADA_RES:
+                String message=parametros.getString("message");
+                if(message.equals("Puntuacion")){ // get myPoints oponent
+                    int point=parametros.getInt("myPoints");
+                    if(point==puntos)
+                    {
+                        abcController.next();
+                    }else
+                    {
+                        puntos=point;
+                        misPalabrasTerminadas=1;
+                    }
+                }
+                break;
+            case Constants.FINISH_GAME_RES:
+                finalizo=parametros.getString("result");
+                //Ganador o Perdedor
                 break;
         }
        }catch (Exception ex)

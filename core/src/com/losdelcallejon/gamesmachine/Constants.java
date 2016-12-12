@@ -20,9 +20,10 @@ public class Constants {
     public static final String UPDATE_OPONENTE="updateOponente";
     public static final String LETRA_PULSADA ="A" ;
     public static final String RENDERIZAR_LETRAS_POSICIONES="playGame";
-    public static final String PALABRA_ACABADA = "C";
+    public static final String PALABRA_ACABADA = "endPlay";
+    public static final String PALABRA_ACABADA_RES = "endPlayRes";
     public static final String REQUEST_PLAY="requestPlay";
-    public static final String INICIAR_PARTIDA_RES="initGameRes";
+    public static final String INICIAR_PARTIDA_RES = "initGameRes";
     public static final String CANCEL_PLAY_REQUEST="cancelPlayRequest";
 
     ///Recepcionar respuestas
@@ -39,6 +40,7 @@ public class Constants {
 
 
     public static final int EJEMPLO_NIVEL=1;
+    public static final String FINISH_GAME_RES = "finishGameRes";
     public static String PARA_LOCO="Empezo Partida";
 
     public static String toString(int letra)
@@ -138,9 +140,9 @@ public class Constants {
     public static ArrayList<String> DummyFactoryWords()
     {
         ArrayList<String> words=new ArrayList<String>();
-        words.add("AAA");
-        words.add("DDD");
-        words.add("MMMM");
+        words.add("A");
+        words.add("D");
+        words.add("MM");
         return  words;
     }
 }

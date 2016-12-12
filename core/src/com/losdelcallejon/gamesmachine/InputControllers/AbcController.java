@@ -34,6 +34,7 @@ public class AbcController {
     private int elQueToca;
     private ArrayList<String> palabras;
     private int laPalabraQueToca;
+    private boolean cambioPalabra;
 
     private Sound touchSound;
     public AbcController(HashMap<String, String> abecedario, String palabra, ArrayList<Letra> letraList, Stage stage, World world, AssetManager assetManager,ArrayList<String> palabras) {
@@ -47,6 +48,7 @@ public class AbcController {
         miPuntaje="";
         elQueToca=0;
         laPalabraQueToca=0;
+        cambioPalabra=true;
         touchSound=assetManager.get("audio/jump.ogg");
     }
 //<editor-fold desc="Setters y getters">
@@ -119,7 +121,7 @@ public class AbcController {
             {
                 Letra letra=letraList.get(i);
                 JSONObject JSONLetra=new JSONObject();
-                JSONLetra.put("letra",letra.tecladoVirtual.letra);
+                JSONLetra.put("letra",letra.getUserData());
                 JSONLetra.put("x",letra.getXBody());
                 JSONLetra.put("y",letra.getYBody());
                 jsonObject.put(i,JSONLetra);
@@ -148,17 +150,30 @@ public class AbcController {
         float y=5;
         for(int i=0;i<letras.size();i++)
         {
+            //String c=generatePrueba();
             String c= Constants.toString(letras.get(i));
             Texture letraTextura=assetManager.get(this.Abecedario.get(c));
             ControlVirtual controlVirtual=new ControlVirtual();
             controlVirtual.letra=c;
-            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),y),controlVirtual);
+            String identificador=c+String.valueOf(i);
+            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),y),controlVirtual,identificador);
             ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);
             y+=incrementoY;
             letrita.addCaptureListener(procesadorEntrada);
             this.letraList.add(letrita);
             stage.addActor(letrita);
         }
+    }
+
+    private String generatePrueba() {
+        Random r = new Random();
+        int t = r.nextInt(3);
+        if(t==0){
+            return "A";
+        }else if(t==1){
+            return "D";
+        }
+        return "M";
     }
 
     private float generarY() {
@@ -199,7 +214,7 @@ public class AbcController {
         world.dispose();
     }
 
-    public void validarCreador(Socket socket,int idPartida) {
+    public void validarCreador(Socket socket,int idPartida,boolean esCreador) {
         ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
         for(int i=0;i<letraList.size();i++)
         {
@@ -209,8 +224,10 @@ public class AbcController {
             {
                 if(haSidoPulsada)
                 {
+                    int xds=0;
+                    xds++;
 
-                    socket.emit(Constants.TOUCHED_RES,letraToJson(i,idPartida));
+                    socket.emit(Constants.TOUCHED,letraToJson(letrita.getUserData(),idPartida,esCreador));
                     touchSound.play();
                     if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
                     {
@@ -219,7 +236,12 @@ public class AbcController {
                     }
                     if(elQueToca==palabra.length())
                     {
-                        //socket.emit(Constants.PALABRA_ACABADA,"");
+
+                        if(palabra.equals("D")){
+                            int xd=0;
+                            xd++;
+                        }
+                        socket.emit(Constants.PALABRA_ACABADA,toPalabraAcabada(idPartida,palabra));
                         elQueToca=0;
                         laPalabraQueToca++;
                         miPuntaje="";
@@ -237,11 +259,33 @@ public class AbcController {
         }
     }
 
-    private JSONObject letraToJson(int i,int idPartida) {
+    public void next()
+    {
+        elQueToca=0;
+        laPalabraQueToca++;
+        miPuntaje="";
+        palabra=nextPalabraMonoJugador();
+    }
+    private JSONObject toPalabraAcabada(int idPartida, String palabra) {
+        try{
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("idPartida",idPartida);
+            jsonObject.put("palabra",palabra);
+            return  jsonObject;
+        }
+        catch (Exception ex)
+        {
+
+        }
+        return null;
+    }
+
+    private JSONObject letraToJson(String letra,int idPartida,boolean isCreador) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("idPartida", idPartida);
-            jsonObject.put("letra",i);
+            jsonObject.put("letra",letra);
+            jsonObject.put("player",creadorToString(isCreador));
             return jsonObject;
         }catch (Exception ex)
         {
@@ -250,11 +294,19 @@ public class AbcController {
         return null;
     }
 
+    private String creadorToString(boolean isCreador) {
+        if(isCreador)
+        {
+            return "Creador";
+        }
+        return "no";
+    }
+
     public boolean letrasVacias() {
         return letraList.size()==0;
     }
 
-    public void validarReceptor(Socket socket,int idPartida) {
+    public void validarReceptor(Socket socket,int idPartida,boolean esCreador) {
         ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
         for(int i=0;i<letraList.size();i++)
         {
@@ -262,7 +314,8 @@ public class AbcController {
             boolean haSidoPulsada=letrita.haSidoPulsada();
                 if(haSidoPulsada)
                 {
-                    socket.emit(Constants.TOUCHED_RES,letraToJson(i,idPartida));
+                    touchSound.play();
+                    socket.emit(Constants.TOUCHED,letraToJson(letrita.getUserData(),idPartida,esCreador));
                     if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
                     {
                         miPuntaje+=letrita.tecladoVirtual.letra;
@@ -270,7 +323,11 @@ public class AbcController {
                     }
                     if(elQueToca==palabra.length())
                     {
-                        socket.emit(Constants.PALABRA_ACABADA,"");
+                        if(palabra.equals("D")){
+                            int xd=0;
+                            xd++;
+                        }
+                        socket.emit(Constants.PALABRA_ACABADA,toPalabraAcabada(idPartida,palabra));
                         elQueToca=0;
                         laPalabraQueToca++;
                         miPuntaje="";
@@ -323,11 +380,13 @@ public class AbcController {
         }
     }
 
-    private String nextPalabraMonoJugador() {
+    public String nextPalabraMonoJugador() {
         if(laPalabraQueToca==palabras.size())
         {
             return "-1";
         }
+
+        cambioPalabra=true;
         return palabras.get(laPalabraQueToca);
     }
 
@@ -337,11 +396,12 @@ public class AbcController {
             for(int i=0;i<letraListFromJson.length();i++)
             {
                 JSONObject jsonLetra=letraListFromJson.getJSONObject(i);
-                String c= jsonLetra.getString("letra");
+                String identificador= jsonLetra.getString("letra");
+                String c=String.valueOf(identificador.charAt(0));
                 Texture letraTextura=assetManager.get(this.Abecedario.get(c));
                 ControlVirtual controlVirtual=new ControlVirtual();
                 controlVirtual.letra=c;
-                Letra letrita=new Letra(world,letraTextura,new Vector2((float)jsonLetra.getDouble("x"),(float)jsonLetra.getDouble("y")),controlVirtual);
+                Letra letrita=new Letra(world,letraTextura,new Vector2((float)jsonLetra.getDouble("x"),(float)jsonLetra.getDouble("y")),controlVirtual,identificador);
                 ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);
                 letrita.addCaptureListener(procesadorEntrada);
                 this.letraList.add(letrita);
@@ -371,5 +431,18 @@ public class AbcController {
                 letraList.get(i).getBody().setType(BodyDef.BodyType.StaticBody);
             }
         }
+    }
+
+
+    public void eliminarLetraList(int eliminaLetra) {
+        letraList.remove(eliminaLetra);
+    }
+
+    public boolean cambioPalabra() {
+        return cambioPalabra;
+    }
+
+    public void setCambioPalabra(boolean cambioPalabra) {
+        this.cambioPalabra = cambioPalabra;
     }
 }

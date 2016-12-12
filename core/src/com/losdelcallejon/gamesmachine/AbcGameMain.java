@@ -59,8 +59,9 @@ public class AbcGameMain extends Game {
 	public void goToOptionGameScreen() {
 		cargarRecursos();
 		while (!getManager().update()) ;
-		loginScreen = new LoginScreen(this,actionResolver);
-		setScreen(loginScreen);
+		OptionGameScreen gameScreen= new OptionGameScreen(this,true,Constants.EJEMPLO_NIVEL,actionResolver);
+		//loginScreen = new LoginScreen(this,actionResolver);
+		setScreen(gameScreen);
 	}
 
 	public void goToMenuScreen(String sexo) {
