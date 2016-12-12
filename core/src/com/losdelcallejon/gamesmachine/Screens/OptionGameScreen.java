@@ -18,6 +18,9 @@ import com.losdelcallejon.gamesmachine.Constants;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by HP on 11/12/2016.
  */
@@ -38,12 +41,14 @@ public class OptionGameScreen extends BaseScreen{
     private boolean esCreador;
     private String nombreRival;
     private int idPartida;
+    private ArrayList<String> listPalabras;
     public OptionGameScreen(AbcGameMain g, boolean esMultijugador, int unidad, ActionResolver ar) {
         super(g);
 
         this.actionResolver = ar;
         this.esMultijugador=esMultijugador;
         this.unidad=unidad;
+        this.listPalabras = this.actionResolver.obtenerPalabras(this.unidad);
         buscando=false;
         hablando=-1;
         goToGame=false;

@@ -211,4 +211,23 @@ public class DBabc extends SQLiteOpenHelper {
         }
         return list;
     }
+
+    public int obtenerIdUnidad(int nivel){
+        int id = -1;
+        Cursor c = DB.rawQuery("SELECT * FROM unidades WHERE nivel=" + nivel, null);
+        if (c.moveToFirst()) {
+            id = c.getInt(0);
+        }
+        return id;
+    }
+
+    public ArrayList<String> obtenerPalabras(int nivel){
+        ArrayList<String> list = new ArrayList<>();
+        Cursor c = DB.rawQuery("SELECT * FROM palabras WHERE unidad_id=" + obtenerIdUnidad(nivel), null);
+        while (c.moveToNext()) {
+            String palabra = c.getString(1);
+            list.add(palabra);
+        }
+        return list;
+    }
 }
