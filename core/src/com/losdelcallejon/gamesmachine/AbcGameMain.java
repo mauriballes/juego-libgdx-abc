@@ -53,10 +53,14 @@ public class AbcGameMain extends Game {
 	@Override
 	public void create () {
 		manager=new AssetManager();
+		goToOptionGameScreen();
+	}
+
+	public void goToOptionGameScreen() {
 		cargarRecursos();
-		while(!getManager().update());
-		loginScreen=new LoginScreen(this,actionResolver);
-		setScreen(loginScreen);
+		while (!getManager().update()) ;
+		OptionGameScreen gameScreen = new OptionGameScreen(this, true, Constants.EJEMPLO_NIVEL, actionResolver);
+		setScreen(gameScreen);
 	}
 
 	public void goToMenuScreen(String sexo) {
