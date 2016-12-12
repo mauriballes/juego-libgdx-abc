@@ -4,11 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
@@ -31,6 +33,7 @@ public class LoginScreen extends BaseScreen {
     private Stage stage;
     private String nombre,sexo;
     private FondoLogin fl;
+    private boolean endHilo = false;
     public LoginScreen(AbcGameMain g,ActionResolver actionResolver) {
         super(g);
         this.actionResolver = actionResolver;
@@ -74,14 +77,14 @@ public class LoginScreen extends BaseScreen {
                     this.nombre = nombre1;
                     Thread.sleep(3000);
                     while(true) {
-                        actionResolver.tryTTS("Eres niño o niña?");
+                        actionResolver.tryTTS("Eres hombre o mujer?");
                         Thread.sleep(3000);
                         actionResolver.showSpeechPopup();
                         Thread.sleep(4000);
                         String sexo = actionResolver.obtenerResponse();
                       //  String sexo = "niño";
-                        if (sexo.equals("niño") || sexo.equals("niña")) {
-                            if (sexo.equals("niño")){
+                        if (sexo.equals("hombre") || sexo.equals("mujer")) {
+                            if (sexo.equals("hombre")){
                                 this.sexo="M";
                             }else{
                                 this.sexo="N";
@@ -111,18 +114,18 @@ public class LoginScreen extends BaseScreen {
         }else{
             this.nombre = actionResolver.obtenerNombreUsuario();
             this.sexo = actionResolver.obtenerSexoUsuario();
-            actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tus progeso por favor");
+           actionResolver.tryTTS("Bienvenido "+this.nombre+", espera un momento mientras cargamos tu progreso por favor");
 
 
             JSONObject data = new JSONObject();
             try {
-                data.put("mongo_id",actionResolver.obtenerMongoId());
+                data.put("user_id",actionResolver.obtenerMongoId());
                 game.socket.emit("identify",data);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-             game.goToMenuScreen(this.sexo);
+             endHilo = true;
     }
 
     public class FondoLogin extends Actor {
@@ -150,12 +153,21 @@ public class LoginScreen extends BaseScreen {
         gl.glClearColor(0.7f, 0.7f, 0.7f, 1);
         gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
+        if (endHilo){
+            endHilo=false;
+            game.goToMenuScreen(this.sexo);
+        }
         stage.draw();
     }
 
+//    @Override
+//    public void dispose() {
+////        super.dispose();
+//        stage.dispose();
+//    }
+
     @Override
-    public void dispose() {
-        super.dispose();
+    public void hide() {
         stage.dispose();
     }
 

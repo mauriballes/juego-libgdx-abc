@@ -30,7 +30,7 @@ public class AndroidLauncher extends AndroidApplication implements TextToSpeech.
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        checkTTSIntent.putExtra("popup",false);
+       // checkTTSIntent.putExtra("popup",false);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
         actionResolver = new ActionResolverAndroid(this);
@@ -45,7 +45,7 @@ public class AndroidLauncher extends AndroidApplication implements TextToSpeech.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data.getExtras().getBoolean("popup")|| yaCargoTTS) {
+        if (yaCargoTTS) {
             if (requestCode == REQUEST_SPEECH && resultCode == RESULT_OK) {
                 // Get the spoken sentence..
                 ArrayList<String> thingsYouSaid =

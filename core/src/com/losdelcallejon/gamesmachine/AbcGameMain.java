@@ -52,23 +52,22 @@ public class AbcGameMain extends Game {
 	@Override
 	public void create () {
 		manager=new AssetManager();
-		//Aqui se cargan las imagenes como en el siguiente ejemplo:
-		// TODO cargar recursos
+		cargarRecursos();
+		while(!getManager().update());
 		loginScreen=new LoginScreen(this,actionResolver);
 		setScreen(loginScreen);
 	}
 
 	public void goToMenuScreen(String sexo) {
-		cargarRecursos();
+
 		menuScreen=new MenuScreen(this,sexo,actionResolver);
-		while(!getManager().update());
 		setScreen(menuScreen);
 	}
 	private void cargarRecursos() {
 		manager.load("monoplayer.jpg", Texture.class);
 		manager.load("playerShip.png",Texture.class);
 		manager.load("multiplayer.png", Texture.class);
-		manager.load("overfloor.png", Texture.class);
+		manager.load("overfloor1.png", Texture.class);
 		manager.load("buscando.jpeg", Texture.class);
 		manager.load("learn.png",Texture.class);
 		manager.load("lion.png",Texture.class);
@@ -103,5 +102,15 @@ public class AbcGameMain extends Game {
 		manager.load("audio/die.ogg", Sound.class);
 		manager.load("audio/jump.ogg", Sound.class);
 		manager.load("audio/song.ogg", Music.class);
+		manager.load("overfloor2.png", Texture.class);
+		manager.load("overfloor3.png", Texture.class);
+		manager.load("overfloor4.png", Texture.class);
+		manager.load("overfloor5.png", Texture.class);
+		manager.load("overfloor6.png", Texture.class);
+		manager.load("overfloor7.png", Texture.class);
+		manager.load("overfloor8.png", Texture.class);
+		manager.load("overfloor9.png", Texture.class);
+		manager.load("overfloor10.png", Texture.class);
+
 	}
 }

@@ -57,8 +57,6 @@ public class MenuScreen extends BaseScreen {
         nivel = -1;
         this.interfazGrafica = new Stage(new FitViewport(512, 360));
         this.interfazGraficaDos = new Stage(new FitViewport(512, 360));
-        while (!game.getManager().update()) ;
-
         cargarUnidades();
 
         monoJugador = new Image(game.getManager().get("monoplayer.jpg", Texture.class));
@@ -110,24 +108,33 @@ public class MenuScreen extends BaseScreen {
     private void cargarUnidades() {
         int separadorAncho = 20;
         int separadorLargo = 20;
+//        float ctsepAnch = 0.5f;
+//        float ctsepLarg = 0.5f;
         int fila = 2;
         int columna = 0;
         for (int i = 0; i < this.listUnidades.size(); i++) {
             final MUnidades mUnidad = this.listUnidades.get(i);
-            Image Unidad = new Image(game.getManager().get("overfloor.png", Texture.class));
+            Image Unidad = new Image(game.getManager().get("overfloor"+(i+1)+".png", Texture.class));
             if (i == 0) {
                 Unidad.setPosition(0, 360 - Unidad.getHeight());
             } else {
+                Unidad.setPosition(columna * Unidad.getWidth() + separadorAncho, 360 - (fila * Unidad.getHeight() + separadorLargo));
+//                separadorAncho= (int) (separadorAncho * ctsepAnch);
+
                 columna++;
-                Unidad.setPosition(columna * Unidad.getWidth() + separadorLargo, 360 - (fila * Unidad.getHeight() + separadorAncho));
                 if ((i % 3) == 0) {
                     fila++;
+//                    separadorLargo = (int) (separadorLargo * ctsepLarg);
+                    columna = 0;
+//                    separadorAncho = 20;
                 }
             }
             Unidad.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    actionResolver.showToast("HAS SELECCIONADO " + mUnidad.getNombre() +" "
+                            + mUnidad.getDescripcion()+" id= " + mUnidad.getId() + " nivel= "+ mUnidad.getNivel(),5000);
                     nivel = mUnidad.getNivel();
-                    createOptionsGameScreen();
+//                    createOptionsGameScreen();
                     return true;
                 }
             });

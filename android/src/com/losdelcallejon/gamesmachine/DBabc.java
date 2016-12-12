@@ -185,7 +185,7 @@ public class DBabc extends SQLiteOpenHelper {
         String s = "";
         List<MUnidades> list = new ArrayList<>();
         Cursor c = DB.rawQuery("SELECT * FROM unidades ORDER BY "+2, null);
-        if (c.moveToNext()) {
+        while (c.moveToNext()) {
             MUnidades unidad = new MUnidades(
                     c.getInt(0),
                     c.getInt(1),
@@ -201,7 +201,7 @@ public class DBabc extends SQLiteOpenHelper {
         String s = "";
         List<MCursados> list = new ArrayList<>();
         Cursor c = DB.rawQuery("SELECT * FROM cursados WHERE id=" + getIdUsuario(), null);
-        if (c.moveToNext()) {
+        while (c.moveToNext()) {
             MCursados cursados = new MCursados(
                     c.getInt(0),
                     c.getString(1),
