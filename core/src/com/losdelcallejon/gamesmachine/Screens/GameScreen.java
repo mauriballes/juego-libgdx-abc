@@ -57,10 +57,11 @@ public class GameScreen extends BaseScreen {
     String OponenteName;
     ArrayList<String> palabras;
     int idPartida;
+    boolean sePuedenCaer;
+    private String sexo;
     String eliminaLetra;
     private String finalizo;
-
-    public GameScreen(AbcGameMain g,int unidad,boolean isMultiPlayer,boolean esCreador,ArrayList<String> palabras,ActionResolver actionResolver,String Oponent,int idPartida) {
+    public GameScreen(AbcGameMain g,int unidad,boolean isMultiPlayer,boolean esCreador,ArrayList<String> palabras,ActionResolver actionResolver,String Oponent,int idPartida,String sexo) {
             super(g);
             this.actionResolver=actionResolver;
             this.OponenteName=Oponent;
@@ -73,13 +74,14 @@ public class GameScreen extends BaseScreen {
             this.finalizo="-1";
             this.puntos=0;
             this.misPalabrasTerminadas=0;
+            this.sexo=sexo;
 
     }
     public void init() {
 
         if(palabras.size()==0)
         {
-            OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver);
+            OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver,sexo);
             game.setScreen(menuScreen);
         }else{
 
@@ -142,7 +144,11 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
+        if (this.sexo.equals("M")) {
+            Gdx.gl.glClearColor(0f, 0f, 1f, 1f);
+        } else {
+            Gdx.gl.glClearColor(1f, 0.43f, 0.78f, 1f);
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         gestionarFinalizacion();
         if(finalizo.equals("-1")){
@@ -155,7 +161,7 @@ public class GameScreen extends BaseScreen {
                 }else if(abcController.getPalabra().equals("-1"))
                 {
                     bgMusic.stop();
-                    OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver);
+                    OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver,sexo);
                     game.setScreen(menuScreen);
                 }
               //abcController.prueba();

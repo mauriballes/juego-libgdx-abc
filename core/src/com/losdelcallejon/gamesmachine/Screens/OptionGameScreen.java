@@ -42,12 +42,14 @@ public class OptionGameScreen extends BaseScreen{
     private String nombreRival;
     private int idPartida;
     private ArrayList<String> listPalabras;
-    public OptionGameScreen(AbcGameMain g, boolean esMultijugador, int unidad, ActionResolver ar) {
+    private String sexo;
+    public OptionGameScreen(AbcGameMain g, final boolean esMultijugador, final int unidad, ActionResolver ar, final String sexo) {
         super(g);
 
         this.actionResolver = ar;
         this.esMultijugador=esMultijugador;
         this.unidad=unidad;
+        this.sexo = sexo;
         this.listPalabras = this.actionResolver.obtenerPalabras(this.unidad);
         buscando=false;
         hablando=-1;
@@ -67,6 +69,8 @@ public class OptionGameScreen extends BaseScreen{
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 //TODO invocar a metodo de ricardo que le dicta las palabras
                 actionResolver.showToast("TODO metodo de ricardo que le dicta las palabras",5000);
+                PracticaScreen pscreen = new PracticaScreen(game,actionResolver,listPalabras,esMultijugador,unidad,sexo);
+                game.setScreen(pscreen);
                 return true;
             }
         });
@@ -98,11 +102,15 @@ public class OptionGameScreen extends BaseScreen{
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1f,1f,1f,1f);
+        if (this.sexo.equals("M")) {
+            Gdx.gl.glClearColor(0f, 0f, 1f, 1f);
+        } else {
+            Gdx.gl.glClearColor(1f, 0.43f, 0.78f, 1f);
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if(goToGame)
         {
-            gameScreen=new GameScreen(game,Constants.EJEMPLO_NIVEL,true,esCreador,Constants.DummyFactoryWords(),actionResolver,nombreRival,idPartida);
+            gameScreen=new GameScreen(game,unidad,true,esCreador,listPalabras,actionResolver,nombreRival,idPartida,sexo);
             //gameScreen.init();
             game.setScreen(gameScreen);
         }

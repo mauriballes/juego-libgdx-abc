@@ -167,7 +167,7 @@ public class DBabc extends SQLiteOpenHelper {
         String s = "";
         Cursor c = DB.rawQuery("SELECT * FROM unidades where nombre='"+nombreUnidad+"'", null);
         if (c.moveToFirst()) {
-            return c.getInt(2);
+            return c.getInt(0);
         }
         return -1;
     }

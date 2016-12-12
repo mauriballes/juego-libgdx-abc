@@ -128,7 +128,7 @@ public class MenuScreen extends BaseScreen {
     }
 
     private void createOptionsGameScreen() {
-        OptionGameScreen optionGameScreen = new OptionGameScreen(game, esMultijugador, nivel, actionResolver);
+        OptionGameScreen optionGameScreen = new OptionGameScreen(game, esMultijugador, nivel, actionResolver,sexo);
         game.setScreen(optionGameScreen);
     }
 
