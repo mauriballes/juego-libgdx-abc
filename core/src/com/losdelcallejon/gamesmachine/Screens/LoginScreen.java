@@ -208,6 +208,7 @@ public class LoginScreen extends BaseScreen {
                        int nivel = arrayUnidades.getJSONObject(i).getInt("nivel");
                        actionResolver.insertarUnidad(i,nivel,nombre,descripcion);
                     }
+                    //TODO RICARDO GUARDAS TODAS LAS PALABRAS EN LA UNIDAD 1 MIRALO!!!!!
                     JSONArray arrayPalabras = data.getJSONArray("palabras");
                     for (int i = 0; i < arrayPalabras.length(); i++) {
                     String letra = arrayPalabras.getJSONObject(i).getString("letras");

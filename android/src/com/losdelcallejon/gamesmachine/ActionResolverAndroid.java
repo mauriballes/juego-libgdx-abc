@@ -179,6 +179,15 @@ public class ActionResolverAndroid implements ActionResolver {
         return lista;
     }
 
+    @Override
+    public ArrayList<String> obtenerPalabras(int nivel) {
+        bd.OpenDatabase();
+        ArrayList<String> lista;
+        lista = bd.obtenerPalabras(nivel);
+        bd.CloseDatabase();
+        return lista;
+    }
+
     public void setTts(TextToSpeech tts) {
         this.tts = tts;
     }

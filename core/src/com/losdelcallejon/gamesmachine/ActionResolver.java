@@ -3,6 +3,7 @@ package com.losdelcallejon.gamesmachine;
 import com.losdelcallejon.gamesmachine.Models.MCursados;
 import com.losdelcallejon.gamesmachine.Models.MUnidades;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,4 +27,5 @@ public interface ActionResolver {
     public String obtenerMongoId();
     public List<MCursados> obtenerListUnidadesCursadas();
     public List<MUnidades> obtenerListUnidades();
+    public ArrayList<String> obtenerPalabras(int nivel);
 }

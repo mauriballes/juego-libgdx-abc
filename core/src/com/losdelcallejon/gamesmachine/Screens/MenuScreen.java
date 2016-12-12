@@ -115,7 +115,7 @@ public class MenuScreen extends BaseScreen {
                 }
             });
             if(i != 0){
-                Unidad.setVisible(listCursadosId.contains(mUnidadAnt.getId()));
+//                Unidad.setVisible(listCursadosId.contains(mUnidadAnt.getId()));
             }
             interfazGraficaDos.addActor(Unidad);
         }
