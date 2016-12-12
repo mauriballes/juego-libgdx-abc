@@ -27,6 +27,7 @@ import io.socket.emitter.Emitter;
  * Created by HP on 09/12/2016.
  */
 public class LoginScreen extends BaseScreen {
+    public static  float DURATION = 6.0f;
     GL20 gl;
     ActionResolver actionResolver;
 
@@ -87,7 +88,7 @@ public class LoginScreen extends BaseScreen {
                             if (sexo.equals("hombre")){
                                 this.sexo="M";
                             }else{
-                                this.sexo="N";
+                                this.sexo="F";
                             }
                             break;
                         } else {
@@ -125,7 +126,6 @@ public class LoginScreen extends BaseScreen {
                 e.printStackTrace();
             }
         }
-             endHilo = true;
     }
 
     public class FondoLogin extends Actor {
@@ -155,7 +155,17 @@ public class LoginScreen extends BaseScreen {
         stage.act(Gdx.graphics.getDeltaTime());
         if (endHilo){
             endHilo=false;
-            game.goToMenuScreen(this.sexo);
+            stage.addAction(
+                    Actions.sequence(
+                            Actions.delay(DURATION),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    game.goToMenuScreen(sexo);
+                                }
+                            })
+                    )
+            );
         }
         stage.draw();
     }
@@ -204,10 +214,14 @@ public class LoginScreen extends BaseScreen {
                     String nombreUnidad = arrayPalabras.getJSONObject(i).getJSONObject("unidad").getString("nombre");
                     int id_unidad = actionResolver.obtenerIdUnidad(nombreUnidad);
                     actionResolver.insertarPalabra(i,letra,id_unidad);
+                        DURATION = 1.0f;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                endHilo = true;
+                actionResolver.showToast("cargo db",3000);
+
                 break;
         }
     }

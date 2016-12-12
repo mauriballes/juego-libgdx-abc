@@ -41,7 +41,7 @@ public class AbcGameMain extends Game {
 	}
 	private void connectSocket() {
 		try {
-			socket= IO.socket(Constants.SOCKET_URL_Local);
+			socket= IO.socket(Constants.SOCKET_URL);
 			socket.connect();
 		}catch (Exception ex)
 		{
