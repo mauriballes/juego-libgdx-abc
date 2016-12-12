@@ -79,8 +79,13 @@ public class OptionGameScreen extends BaseScreen{
         {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 //TODO invocar a GameScreen
+
                 buscando=true;
                 hablando++;
+                if(!esMultijugador)
+                {
+                    goToGame=true;
+                }
                 return true;
             }
         });
@@ -113,7 +118,7 @@ public class OptionGameScreen extends BaseScreen{
             gameScreen=new GameScreen(game,unidad,esMultijugador,esCreador,listPalabras,actionResolver,nombreRival,idPartida,sexo);
             //gameScreen.init();
             game.setScreen(gameScreen);
-        }
+        }else{
         if(!buscando)
         {
             interfazGrafica.act();
@@ -124,6 +129,7 @@ public class OptionGameScreen extends BaseScreen{
             interfazBuscando.act();
             interfazBuscando.draw();
         }
+        }
     }
 
     private void hablar() {
@@ -133,7 +139,6 @@ public class OptionGameScreen extends BaseScreen{
                 game.socket.emit(Constants.REQUEST_PLAY,unidadToJSONObject());
                 hablando=20;
                 break;
-
         }
     }
 
