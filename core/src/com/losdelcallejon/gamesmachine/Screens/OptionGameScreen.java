@@ -14,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
 import com.losdelcallejon.gamesmachine.ActionResolver;
+import com.losdelcallejon.gamesmachine.Constants;
+
+import org.json.JSONObject;
 
 /**
  * Created by HP on 11/12/2016.
@@ -21,23 +24,29 @@ import com.losdelcallejon.gamesmachine.ActionResolver;
 
 public class OptionGameScreen extends BaseScreen{
     boolean esMultijugador;
-    int nivel;
+    int unidad;
     boolean buscando;
     private Image buscandoImg;
     private Stage interfazBuscando;
     private Image aJugar;
     private Image aHablar;
+    private int hablando;
     private Stage interfazGrafica;
-
     private ActionResolver actionResolver;
-
-    public OptionGameScreen(AbcGameMain g, boolean esMultijugador, int nivel, ActionResolver ar) {
+    private boolean goToGame;
+    GameScreen gameScreen;
+    private boolean esCreador;
+    private String nombreRival;
+    private int idPartida;
+    public OptionGameScreen(AbcGameMain g, boolean esMultijugador, int unidad, ActionResolver ar) {
         super(g);
+
         this.actionResolver = ar;
         this.esMultijugador=esMultijugador;
-        this.nivel=nivel;
+        this.unidad=unidad;
         buscando=false;
-
+        hablando=-1;
+        goToGame=false;
         this.interfazGrafica=new Stage(new FitViewport(512, 360));
         aHablar = new Image(game.getManager().get("learn.png",Texture.class));
         aJugar = new Image(game.getManager().get("play.png", Texture.class));
@@ -45,6 +54,8 @@ public class OptionGameScreen extends BaseScreen{
         aJugar.setPosition(aHablar.getWidth(),0);
         interfazGrafica.addActor(aHablar);
         interfazGrafica.addActor(aJugar);
+        game.socket.on(Constants.REQUEST_PLAY_RES,this);
+        game.socket.on(Constants.INICIAR_PARTIDA_RES,this);
 
         aHablar.addListener(new InputListener()
         {
@@ -59,7 +70,8 @@ public class OptionGameScreen extends BaseScreen{
         {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 //TODO invocar a GameScreen
-                actionResolver.showToast("TODO invocar a GameScreen juego de multiplayer",5000);
+                buscando=true;
+                hablando++;
                 return true;
             }
         });
@@ -73,7 +85,9 @@ public class OptionGameScreen extends BaseScreen{
 
     @Override
     public void show()
+
     {
+
         Gdx.input.setInputProcessor(interfazGrafica);
     }
 
@@ -81,15 +95,45 @@ public class OptionGameScreen extends BaseScreen{
     public void render(float delta) {
         Gdx.gl.glClearColor(1f,1f,1f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if(goToGame)
+        {
+            gameScreen=new GameScreen(game,Constants.EJEMPLO_NIVEL,true,esCreador,Constants.DummyFactoryWords(),actionResolver,nombreRival,idPartida);
+            gameScreen.init();
+            game.setScreen(gameScreen);
+        }
         if(!buscando)
         {
             interfazGrafica.act();
             interfazGrafica.draw();
         }else
         {
+            hablar();
             interfazBuscando.act();
             interfazBuscando.draw();
         }
+    }
+
+    private void hablar() {
+        switch (hablando)
+        {
+            case 0: // BUSCANDO OPONENTE
+                game.socket.emit(Constants.REQUEST_PLAY,unidadToJSONObject());
+                hablando=20;
+                break;
+
+        }
+    }
+
+    public JSONObject unidadToJSONObject()
+    {
+        try {
+            JSONObject params =new JSONObject();
+            params.put("unidad",unidad);
+            return params;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            return null;
     }
 
 
@@ -97,11 +141,70 @@ public class OptionGameScreen extends BaseScreen{
     public void hide() {
         Gdx.input.setInputProcessor(null);
         interfazGrafica.dispose();
+        interfazBuscando.dispose();
     }
 
 
     @Override
     public void call(Object... args) {
-        super.call(args);
+        try{
+
+           JSONObject parametro= (JSONObject) args[0];
+           String evento=parametro.getString("evento");
+            switch (evento)
+            {
+                case Constants.REQUEST_PLAY_RES:
+                    String message=parametro.getString("message");
+                    boolean rango=rangoDeIntentos();
+                    if(message.equals(Constants.BUSCANDO_OPONENTE) && rango)
+                    {
+                        actionResolver.tryTTS(message);
+                        Thread.sleep(2000);
+                        game.socket.emit(Constants.REQUEST_PLAY,unidadToJSONObject());
+                    }else if(message.equals(Constants.BUSCANDO_OPONENTE) && !rango)
+                    {
+                        buscando=false;
+                        hablando=-1;
+                        actionResolver.tryTTS("Oponente no encontrado");
+                        game.socket.emit(Constants.CANCEL_PLAY_REQUEST,null);
+                        Thread.sleep(1000);
+                    }else if(message.equals(Constants.PARA_LOCO))
+                    {
+                        buscando=false;
+                        hablando=-1;
+                    }else
+                    {
+                        buscando=false;
+                        hablando=-1;
+                        actionResolver.tryTTS(message);
+                        Thread.sleep(1000);
+                    }
+                    break;
+                case Constants.INICIAR_PARTIDA_RES:
+                    esCreador=esCreador(parametro.getString("rol"));
+                    nombreRival=parametro.getString("rival");
+                    idPartida=parametro.getInt("idPartida");
+                    goToGame=true;
+                    break;
+            }
+        }catch (Exception ex)
+        {
+            String s=ex.getMessage();
+            int xd=0;
+            xd++;
+        }
+    }
+
+    private boolean esCreador(String rol) {
+        return rol.equals("Creador");
+    }
+
+    private boolean rangoDeIntentos() {
+        if(hablando>=20 && hablando<=21)
+        {
+            hablando++;
+            return true;
+        }
+        return false;
     }
 }

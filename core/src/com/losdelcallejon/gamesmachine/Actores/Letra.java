@@ -35,7 +35,6 @@ public class Letra extends Actor {
         def.position.set(position);
         def.type= BodyDef.BodyType.DynamicBody;
         body=world.createBody(def);
-
         PolygonShape letraShape= new PolygonShape();
         letraShape.setAsBox(0.5f,0.5f);
         fixture= body.createFixture(letraShape,3);
@@ -44,6 +43,11 @@ public class Letra extends Actor {
         setSize(Constants.PIXELS_IN_METER*1,Constants.PIXELS_IN_METER*1);
         velocidadBajada=generarVelocidadBajada()*1.07f;
         this.tecladoVirtual=tecladoVirtual;
+    }
+
+    public Body getBody()
+    {
+        return body;
     }
 
     private float generarVelocidadBajada() {
@@ -60,11 +64,20 @@ public class Letra extends Actor {
             batch.draw(texture,getX(),getY(),getWidth(),getHeight());
     }
 
+    public float getXBody()
+    {
+        return body.getPosition().x;
+    }
+    public float getYBody()
+    {
+        return body.getPosition().y;
+    }
     @Override
     public void act(float delta) {
 
-        body.applyTorque(0.5f,true);
-
+        if(body.getType()==BodyDef.BodyType.DynamicBody) {
+            body.applyTorque(0.5f, true);
+        }
        // body.applyForceToCenter(0,velocidadBajada,true);
     }
 
@@ -77,6 +90,11 @@ public class Letra extends Actor {
 
     public boolean pasoLaPantalla() {
         return (getY()+getHeight())<0;
+    }
+
+    public boolean pasoLaMitad()
+    {
+        return (((body.getPosition().y-0.5f)*Constants.PIXELS_IN_METER))<0;
     }
 
     public boolean haSidoPulsada() {

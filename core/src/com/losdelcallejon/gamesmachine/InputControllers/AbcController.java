@@ -4,11 +4,15 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.Actores.Letra;
 import com.losdelcallejon.gamesmachine.Constants;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,6 +98,39 @@ public class AbcController {
         this.miPuntaje = miPuntaje;
     }
     //</editor-fold>
+    public JSONObject toJson(int idPartida)
+    {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("idPartida", idPartida);
+            jsonObject.put("letras",generateJSon());
+            return jsonObject;
+        }catch (Exception ex)
+        {
+
+        }
+        return null;
+    }
+
+    private JSONArray generateJSon() {
+        try {
+            JSONArray jsonObject = new JSONArray();
+            for(int i=0;i<letraList.size();i++)
+            {
+                Letra letra=letraList.get(i);
+                JSONObject JSONLetra=new JSONObject();
+                JSONLetra.put("letra",letra.tecladoVirtual.letra);
+                JSONLetra.put("x",letra.getXBody());
+                JSONLetra.put("y",letra.getYBody());
+                jsonObject.put(i,JSONLetra);
+            }
+            return jsonObject;
+        }catch (Exception ex)
+        {
+
+        }
+        return null;
+    }
 
     public ArrayList<Integer> generarLetras()
     {
@@ -107,14 +144,17 @@ public class AbcController {
         return arrayList;
     }
     public void cargarRecursosDeLetras(ArrayList<Integer> letras) {
+        float incrementoY=1.1160493827f;
+        float y=5;
         for(int i=0;i<letras.size();i++)
         {
             String c= Constants.toString(letras.get(i));
             Texture letraTextura=assetManager.get(this.Abecedario.get(c));
             ControlVirtual controlVirtual=new ControlVirtual();
             controlVirtual.letra=c;
-            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),generarY()),controlVirtual);
+            Letra letrita=new Letra(world,letraTextura,new Vector2(generarX(),y),controlVirtual);
             ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);
+            y+=incrementoY;
             letrita.addCaptureListener(procesadorEntrada);
             this.letraList.add(letrita);
             stage.addActor(letrita);
@@ -166,7 +206,7 @@ public class AbcController {
             boolean haSidoPulsada=letrita.haSidoPulsada();
             if(letrita.pasoLaPantalla()|| haSidoPulsada)
             {
-                if(haSidoPulsada)
+               /* if(haSidoPulsada)
                 {
                     touchSound.play();
                     if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
@@ -180,7 +220,7 @@ public class AbcController {
                         elQueToca=0;
                         miPuntaje="";
                     }
-                }
+                }*/
                 letrasAEliminar.add(letrita);
                 letrita.remove();
                 letrita.detach();
@@ -264,5 +304,47 @@ public class AbcController {
             return "-1";
         }
         return palabras.get(laPalabraQueToca);
+    }
+
+    public void setLetraListFromJson(JSONArray letraListFromJson) {
+        try{
+            limpiarLetraList();
+            letraList=new ArrayList<>();
+            for(int i=0;i<letraListFromJson.length();i++)
+            {
+                JSONObject jsonLetra=letraListFromJson.getJSONObject(i);
+                String c= jsonLetra.getString("letra");
+                Texture letraTextura=assetManager.get(this.Abecedario.get(c));
+                ControlVirtual controlVirtual=new ControlVirtual();
+                controlVirtual.letra=c;
+                Letra letrita=new Letra(world,letraTextura,new Vector2((float)jsonLetra.getDouble("x"),(float)jsonLetra.getDouble("y")),controlVirtual);
+                ProcesadorEntrada procesadorEntrada=new ProcesadorEntrada(controlVirtual);
+                letrita.addCaptureListener(procesadorEntrada);
+                this.letraList.add(letrita);
+                stage.addActor(letrita);
+            }
+        }catch (Exception e)
+        {
+
+        }
+    }
+
+    private void limpiarLetraList() {
+        stage.clear();
+        for(int i=0;i<letraList.size();i++)
+        {
+            letraList.get(i).remove();
+            letraList.get(i).detach();
+        }
+
+    }
+
+    public void prueba() {
+        for(int i=0;i<letraList.size();i++)
+        {
+            if(letraList.get(i).pasoLaMitad()){
+                letraList.get(i).getBody().setType(BodyDef.BodyType.StaticBody);
+            }
+        }
     }
 }

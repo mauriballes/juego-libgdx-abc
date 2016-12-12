@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.losdelcallejon.gamesmachine.Screens.GameScreen;
 import com.losdelcallejon.gamesmachine.Screens.LoginScreen;
 import com.losdelcallejon.gamesmachine.Screens.MenuScreen;
+import com.losdelcallejon.gamesmachine.Screens.OptionGameScreen;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -55,17 +56,17 @@ public class AbcGameMain extends Game {
 		manager=new AssetManager();
 		//Aqui se cargan las imagenes como en el siguiente ejemplo:
 		// TODO cargar recursos
-		goToMenuScreen();
+		goToOptionGameScreen();
 //		manager.load("player.png", Texture.class);
 //		loginScreen=new LoginScreen(this,actionResolver);
 //		setScreen(loginScreen);
 	}
 
-	public void goToMenuScreen() {
+	public void goToOptionGameScreen() {
 		cargarRecursos();
-		menuScreen=new MenuScreen(this,actionResolver);
 		while(!getManager().update());
-		setScreen(menuScreen);
+		OptionGameScreen gameScreen=new OptionGameScreen(this,true,Constants.EJEMPLO_NIVEL,actionResolver);
+		setScreen(gameScreen);
 	}
 	private void cargarRecursos() {
 		manager.load("monoplayer.jpg", Texture.class);
@@ -73,6 +74,7 @@ public class AbcGameMain extends Game {
 		manager.load("multiplayer.png", Texture.class);
 		manager.load("overfloor.png", Texture.class);
 		manager.load("buscando.jpeg", Texture.class);
+		manager.load("fondogame.jpg", Texture.class);
 		manager.load("learn.png",Texture.class);
 		manager.load("lion.png",Texture.class);
 		manager.load("play.png",Texture.class);

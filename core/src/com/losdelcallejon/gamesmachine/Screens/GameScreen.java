@@ -17,11 +17,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.losdelcallejon.gamesmachine.AbcGameMain;
+import com.losdelcallejon.gamesmachine.ActionResolver;
 import com.losdelcallejon.gamesmachine.InputControllers.AbcController;
 import com.losdelcallejon.gamesmachine.InputControllers.ControlVirtual;
 import com.losdelcallejon.gamesmachine.Actores.Letra;
 import com.losdelcallejon.gamesmachine.InputControllers.ProcesadorEntrada;
 import com.losdelcallejon.gamesmachine.Constants;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +36,9 @@ import io.socket.client.Socket;
  * Created by HP on 09/12/2016.
  */
 public class GameScreen extends BaseScreen {
-    public static int unidad;
-    public static boolean isMultiplayer;
-    public static boolean esCreador;
+    public  int unidad;
+    public  boolean isMultiplayer;
+    public  boolean esCreador;
     HashMap<String,String> Abecedario;
     private String palabra;
     private ArrayList<Letra> letraList;
@@ -43,6 +46,7 @@ public class GameScreen extends BaseScreen {
 
 
     private Stage stage;
+    private Stage stageFondo;
     private World world;
     private AbcController abcController;
     private Label puntaje;
@@ -51,48 +55,83 @@ public class GameScreen extends BaseScreen {
     private Stage stageCargando;
     private Skin skin;
     private Music bgMusic;
-    public GameScreen(AbcGameMain g,int unidad,boolean isMultiPlayer,boolean esCreador,ArrayList<String> palabras) {
+    private ActionResolver actionResolver;
+    String OponenteName;
+    ArrayList<String> palabras;
+    int idPartida;
+    boolean sePuedenCaer;
+    public GameScreen(AbcGameMain g,int unidad,boolean isMultiPlayer,boolean esCreador,ArrayList<String> palabras,ActionResolver actionResolver,String Oponent,int idPartida) {
             super(g);
-                if(palabras.size()==0)
-                {
-                    MenuScreen menuScreen=new MenuScreen(game);
-                    game.setScreen(menuScreen);
-                }else{
-                    this.unidad = unidad;
-                    this.isMultiplayer = isMultiPlayer;
-                    this.esCreador = esCreador;
-                    Abecedario = Constants.OBTENER_ABECEDARIO();
-                    this.stage = new Stage(new FitViewport(1600 , 900));
-                    this.world = new World(new Vector2(0, -0.8f), true);
-                    palabra = palabras.get(0);
-                    skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-                    bgMusic=game.getManager().get("audio/song.ogg");
+            this.actionResolver=actionResolver;
+            this.OponenteName=Oponent;
+            this.unidad = unidad;
+            this.isMultiplayer = isMultiPlayer;
+            this.esCreador = esCreador;
+            this.palabras=palabras;
+            this.idPartida=idPartida;
+            this.sePuedenCaer=false;
+    }
+    public void init() {
 
-                    fondo=new Image(game.getManager().get("fondogame.jpg",Texture.class));
-                    puntaje = new Label(palabra, skin);
-                    puntaje.setSize(300, 150);
-                    puntaje.setPosition(0, 0);
-                    fondo.setPosition(0,0);
-                    this.stage.addActor(fondo);
-                    this.stage.addActor(puntaje);
-                    stageCargando();
-                    this.letraList = new ArrayList<Letra>();
-                    abcController = new AbcController(Abecedario, palabra, letraList, stage, world, game.getManager(),palabras);
-                    registrarEventos();
-                }
+        if(palabras.size()==0)
+        {
+            OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver);
+            game.setScreen(menuScreen);
+        }else{
+
+            Abecedario = Constants.OBTENER_ABECEDARIO();
+            this.stage = new Stage(new FitViewport(1600 , 900));
+            this.stageFondo=new Stage(new FitViewport(1600,900));
+            this.world = new World(new Vector2(0, -0.8f), true);
+            palabra = palabras.get(0);
+            skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+            bgMusic=game.getManager().get("audio/song.ogg");
+            fondo=new Image(game.getManager().get("fondogame.jpg",Texture.class));
+            puntaje = new Label(palabra, skin);
+            puntaje.setSize(300, 150);
+            puntaje.setPosition(0, 0);
+            fondo.setPosition(0,0);
+            this.stageFondo.addActor(fondo);
+            this.stageFondo.addActor(puntaje);
+
+            stageCargando();
+            this.letraList = new ArrayList<Letra>();
+            abcController = new AbcController(Abecedario, palabra, letraList, stage, world, game.getManager(),palabras);
+            registrarEventos();
+        }
+    }
+    @Override
+    public void show() {
+
+        if(!isMultiplayer){         // Si no es multijugador
+            abcController.cargarRecursosDeLetras(abcController.generarLetras());
+        }else       // Si es multijugador hay que ver si es creador de partida o retado
+        {
+            if(esCreador) ///Si es el creador de la partida genera los recursos y se lo envia al servidor para que este se lo envie al retador
+            {
+                abcController.cargarRecursosDeLetras(abcController.generarLetras());
+                game.socket.emit(Constants.RENDERIZAR_LETRAS_POSICIONES,abcController.toJson(idPartida));
+            }
+        }
+        bgMusic.setVolume(0.75f);
+        bgMusic.play();
+        Gdx.input.setInputProcessor(stage);
     }
 
+
+
     private void registrarEventos() {
-        Socket socket =game.socket;
+        int xd=0;
+        xd++;
         if(isMultiplayer)
-        {
+        {   Socket socket =game.socket;
             // Cuando el oponente envie la tecla que pulso nosotros tenemos que eliminarla tambien de nuestra pantalla
-            socket.on(Constants.LETRA_PULSADA,this);
-            socket.on(Constants.ENVIAR_PALABRA,this);
+            //socket.on(Constants.LETRA_PULSADA,this);
+           // socket.on(Constants.ENVIAR_PALABRA,this);
             if(!esCreador) /// Si yo soy el retado
             {
                 //Tengo que renderizar constantemente todas las letras que me envie mi retador, por que el es el creador de la partida
-                socket.on(Constants.RENDERIZAR_LETRAS_POSICIONES,this);
+               socket.on(Constants.RENDERIZAR_LETRAS_RES,this);
             }
         }
     }
@@ -104,22 +143,8 @@ public class GameScreen extends BaseScreen {
         cargando.setPosition(440 - cargando.getWidth() / 2, 320 - cargando.getHeight());
         stageCargando.addActor(cargando);
     }
-    @Override
-    public void show() {
-        if(!isMultiplayer){         // Si no es multijugador
-            abcController.cargarRecursosDeLetras(abcController.generarLetras());
-        }else       // Si es multijugador hay que ver si es creador de partida o retado
-        {
-            if(esCreador) ///Si es el creador de la partida genera los recursos y se lo envia al servidor para que este se lo envie al retador
-            {
-                abcController.cargarRecursosDeLetras(abcController.generarLetras());
-                //TODO enviar al servidor las letras generadas
-            }
-        }
-        bgMusic.setVolume(0.75f);
-        bgMusic.play();
-        Gdx.input.setInputProcessor(stage);
-    }
+
+
 
     @Override
     public void render(float delta) {
@@ -134,9 +159,10 @@ public class GameScreen extends BaseScreen {
                 }else if(abcController.getPalabra().equals("-1"))
                 {
                     bgMusic.stop();
-                    MenuScreen menuScreen=new MenuScreen(game);
+                    OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver);
                     game.setScreen(menuScreen);
                 }
+              //abcController.prueba();
             }else   // Si es multijugador
             {
                 if(esCreador) // Como yo soy el creador es mi responsabilidad actualizar la pantalla para mi oponente
@@ -146,21 +172,28 @@ public class GameScreen extends BaseScreen {
                     {
 
                         abcController.cargarRecursosDeLetras(abcController.generarLetras());
+                        game.socket.emit(Constants.RENDERIZAR_LETRAS_POSICIONES,abcController.toJson(idPartida));
+
                     }
-                    //Envia las posiciones al servidor para que este se la mande a mi oponente
-                    game.socket.emit(Constants.RENDERIZAR_LETRAS_POSICIONES,abcController.getLetraList());
                 }else
                 {
-                    abcController.validarReceptor(game.socket);
+                   // abcController.validarReceptor(game.socket);
                 }
             }
             puntaje.setText(abcController.getMiPuntaje());
+
+            stageFondo.act();
+            stageFondo.draw();
             abcController.pintar(delta);
         }else  // Si no hay palabra, hay que mostrar una pantalla de carga a la espera de que el servidor envie una o que diga si ya acabo el juego
         {
             stageCargando.act();
             stageCargando.draw();
         }
+    }
+
+    private boolean hayActores() {
+        return false;
     }
 
 
@@ -177,14 +210,29 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void call(Object... args) {
-       Integer id= (Integer) args[0];
-        switch (id)
+       try{
+
+       JSONObject parametros= (JSONObject) args[0];
+       String status=parametros.getString("status");
+       String evento=  parametros.getString("evento");
+
+        switch (evento)
         {
-            case Constants.LETRA_PULSADA_RESPUESTA:
+            case Constants.RENDERIZAR_LETRAS_RES:
+                if(!status.equals("OK"))
+                {
+                    //TODO irse a la puta
+                }
+                abcController.setLetraListFromJson(parametros.getJSONArray("letras"));
+                //enviar mensaje al oponente que ok
                 break;
-            case Constants.RENDERIZAR_LETRAS_POSICIONES_RESPUESTA:
+            case "dd":
                 break;
         }
+       }catch (Exception ex)
+       {
+
+       }
     }
 
 }
