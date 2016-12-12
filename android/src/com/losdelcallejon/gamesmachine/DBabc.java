@@ -130,9 +130,9 @@ public class DBabc extends SQLiteOpenHelper {
             Integer unidad = c.getInt(2);
             listUnidades.add(unidad);
         }
-        if(listUnidades.isEmpty()){
-            listUnidades.add(1); //Agrega la primer unidad
-        }
+//        if(listUnidades.isEmpty()){
+//            listUnidades.add(1); //Agrega la primer unidad
+//        }
         return listUnidades;
     }
 

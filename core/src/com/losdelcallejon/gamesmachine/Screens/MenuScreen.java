@@ -31,15 +31,12 @@ public class MenuScreen extends BaseScreen {
     * */
     private Image monoJugador;
     private Image multiJugador;
-    private Image Unidad1;
-    private Image Unidad2;
     private Stage interfazGrafica;
     boolean esMultijugador;
     int nivel;
     boolean primerPantalla;
     private Stage interfazGraficaDos;
     java.util.List<MUnidades> listUnidades;
-    java.util.List<MCursados> listCursados;
     java.util.List<Integer> listCursadosId;
 
     private String sexo;
@@ -51,7 +48,6 @@ public class MenuScreen extends BaseScreen {
         this.sexo = sexo;
         this.actionResolver = actionResolver;
         this.listUnidades = this.actionResolver.obtenerListUnidades();
-        this.listCursados = this.actionResolver.obtenerListUnidadesCursadas();
         this.listCursadosId = this.actionResolver.obtenerUnidadesDelUsuario();
         esMultijugador = false;
         nivel = -1;
@@ -74,71 +70,53 @@ public class MenuScreen extends BaseScreen {
                 return true;
             }
         });
-//        Unidad1.addListener(new InputListener()
-//        {
-//            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-//                nivel=0;
-//                createOptionsGameScreen();
-//                return true;
-//
-//            }
-//        });
-//        Unidad2.addListener(new InputListener()
-//        {
-//            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-//                nivel=1;
-//                createOptionsGameScreen();
-//                return true;
-//            }
-//        });
         monoJugador.setPosition(0, 360 - monoJugador.getHeight());
         multiJugador.setPosition(multiJugador.getWidth(), 360 - monoJugador.getHeight());
         interfazGrafica.addActor(monoJugador);
         interfazGrafica.addActor(multiJugador);
-
-
-//        Unidad1 = new Image(game.getManager().get("overfloor.png", Texture.class));
-//        Unidad2 = new Image(game.getManager().get("overfloor.png", Texture.class));
-//        Unidad1.setPosition(50,10);
-//        Unidad2.setPosition(200+Unidad1.getWidth(),10);
-//        interfazGraficaDos.addActor(Unidad1);
-//        interfazGraficaDos.addActor(Unidad2);
     }
 
     private void cargarUnidades() {
-        int separadorAncho = 20;
+        int separadorAncho = 40;
         int separadorLargo = 20;
-//        float ctsepAnch = 0.5f;
-//        float ctsepLarg = 0.5f;
-        int fila = 2;
+        int fila = 1;
         int columna = 0;
+        MUnidades mUnidadAnt = null;
         for (int i = 0; i < this.listUnidades.size(); i++) {
             final MUnidades mUnidad = this.listUnidades.get(i);
-            Image Unidad = new Image(game.getManager().get("overfloor"+(i+1)+".png", Texture.class));
+            Image Unidad = new Image(game.getManager().get("overfloor"+(mUnidad.getNivel())+".png", Texture.class));
             if (i == 0) {
-                Unidad.setPosition(0, 360 - Unidad.getHeight());
+                Unidad.setPosition(
+                        0,
+                        360 - (fila * (Unidad.getHeight() + separadorLargo) )
+                );
+                fila++;
+                mUnidadAnt = mUnidad;
             } else {
-                Unidad.setPosition(columna * Unidad.getWidth() + separadorAncho, 360 - (fila * Unidad.getHeight() + separadorLargo));
-//                separadorAncho= (int) (separadorAncho * ctsepAnch);
-
+                Unidad.setPosition(
+                        columna * (Unidad.getWidth() + separadorAncho),
+                        360 - (fila * (Unidad.getHeight() + separadorLargo) )
+                );
                 columna++;
                 if ((i % 3) == 0) {
                     fila++;
-//                    separadorLargo = (int) (separadorLargo * ctsepLarg);
                     columna = 0;
-//                    separadorAncho = 20;
                 }
+                mUnidadAnt = mUnidad;
             }
+
             Unidad.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     actionResolver.showToast("HAS SELECCIONADO " + mUnidad.getNombre() +" "
                             + mUnidad.getDescripcion()+" id= " + mUnidad.getId() + " nivel= "+ mUnidad.getNivel(),5000);
                     nivel = mUnidad.getNivel();
-//                    createOptionsGameScreen();
+                    createOptionsGameScreen();
                     return true;
                 }
             });
-//            Unidad.setVisible(mostrarUnidadesDisponibles(mUnidad));
+            if(i != 0){
+                Unidad.setVisible(listCursadosId.contains(mUnidadAnt.getId()));
+            }
             interfazGraficaDos.addActor(Unidad);
         }
     }
@@ -147,16 +125,6 @@ public class MenuScreen extends BaseScreen {
         this.esMultijugador = esMultijugador;
         primerPantalla = false;
         Gdx.input.setInputProcessor(interfazGraficaDos);
-    }
-
-    private boolean mostrarUnidadesDisponibles(MUnidades unidad) {
-        for (int i = 0; i < listCursados.size(); i++) {
-            MCursados cursado = this.listCursados.get(i);
-            if (unidad.getId() == cursado.getUnidad_id()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void createOptionsGameScreen() {
