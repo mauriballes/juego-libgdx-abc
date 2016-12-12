@@ -199,15 +199,18 @@ public class AbcController {
         world.dispose();
     }
 
-    public void validarCreador(Socket socket) {
+    public void validarCreador(Socket socket,int idPartida) {
         ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
-        for(Letra letrita: letraList)
+        for(int i=0;i<letraList.size();i++)
         {
+            Letra letrita =letraList.get(i);
             boolean haSidoPulsada=letrita.haSidoPulsada();
             if(letrita.pasoLaPantalla()|| haSidoPulsada)
             {
-               /* if(haSidoPulsada)
+                if(haSidoPulsada)
                 {
+
+                    socket.emit(Constants.TOUCHED_RES,letraToJson(i,idPartida));
                     touchSound.play();
                     if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
                     {
@@ -216,11 +219,13 @@ public class AbcController {
                     }
                     if(elQueToca==palabra.length())
                     {
-                        socket.emit(Constants.PALABRA_ACABADA,"");
+                        //socket.emit(Constants.PALABRA_ACABADA,"");
                         elQueToca=0;
+                        laPalabraQueToca++;
                         miPuntaje="";
+                        palabra=nextPalabraMonoJugador();
                     }
-                }*/
+                }
                 letrasAEliminar.add(letrita);
                 letrita.remove();
                 letrita.detach();
@@ -232,17 +237,32 @@ public class AbcController {
         }
     }
 
+    private JSONObject letraToJson(int i,int idPartida) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("idPartida", idPartida);
+            jsonObject.put("letra",i);
+            return jsonObject;
+        }catch (Exception ex)
+        {
+
+        }
+        return null;
+    }
+
     public boolean letrasVacias() {
         return letraList.size()==0;
     }
 
-    public void validarReceptor(Socket socket) {
+    public void validarReceptor(Socket socket,int idPartida) {
         ArrayList<Letra> letrasAEliminar=new ArrayList<Letra>();
-        for(Letra letrita: letraList)
+        for(int i=0;i<letraList.size();i++)
         {
+            Letra letrita =letraList.get(i);
             boolean haSidoPulsada=letrita.haSidoPulsada();
                 if(haSidoPulsada)
                 {
+                    socket.emit(Constants.TOUCHED_RES,letraToJson(i,idPartida));
                     if(elQueToca<palabra.length() && String.valueOf(palabra.charAt(elQueToca)).equals(letrita.tecladoVirtual.letra))
                     {
                         miPuntaje+=letrita.tecladoVirtual.letra;
@@ -252,8 +272,13 @@ public class AbcController {
                     {
                         socket.emit(Constants.PALABRA_ACABADA,"");
                         elQueToca=0;
+                        laPalabraQueToca++;
+                        miPuntaje="";
+                        palabra=nextPalabraMonoJugador();
                     }
                     letrasAEliminar.add(letrita);
+                    letrita.remove();
+                    letrita.detach();
                 }
         }
         for(Letra letrita: letrasAEliminar)
@@ -309,7 +334,6 @@ public class AbcController {
     public void setLetraListFromJson(JSONArray letraListFromJson) {
         try{
             limpiarLetraList();
-            letraList=new ArrayList<>();
             for(int i=0;i<letraListFromJson.length();i++)
             {
                 JSONObject jsonLetra=letraListFromJson.getJSONObject(i);
@@ -333,9 +357,10 @@ public class AbcController {
         stage.clear();
         for(int i=0;i<letraList.size();i++)
         {
-            letraList.get(i).remove();
             letraList.get(i).detach();
+            letraList.get(i).tecladoVirtual=null;
         }
+        letraList.clear();
 
     }
 

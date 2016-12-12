@@ -102,11 +102,12 @@ public class GameScreen extends BaseScreen {
     }
     @Override
     public void show() {
-
+        init();
         if(!isMultiplayer){         // Si no es multijugador
             abcController.cargarRecursosDeLetras(abcController.generarLetras());
         }else       // Si es multijugador hay que ver si es creador de partida o retado
         {
+            game.socket.on(Constants.TOUCHED,this);
             if(esCreador) ///Si es el creador de la partida genera los recursos y se lo envia al servidor para que este se lo envie al retador
             {
                 abcController.cargarRecursosDeLetras(abcController.generarLetras());
@@ -165,9 +166,9 @@ public class GameScreen extends BaseScreen {
               //abcController.prueba();
             }else   // Si es multijugador
             {
-                if(esCreador) // Como yo soy el creador es mi responsabilidad actualizar la pantalla para mi oponente
+               if(esCreador) // Como yo soy el creador es mi responsabilidad actualizar la pantalla para mi oponente
                 {
-                    abcController.validarCreador(game.socket);
+                    //abcController.validarCreador(game.socket,idPartida);
                     if(abcController.letrasVacias())
                     {
 
@@ -177,7 +178,7 @@ public class GameScreen extends BaseScreen {
                     }
                 }else
                 {
-                   // abcController.validarReceptor(game.socket);
+                 // abcController.validarReceptor(game.socket,idPartida);
                 }
             }
             puntaje.setText(abcController.getMiPuntaje());
@@ -206,6 +207,8 @@ public class GameScreen extends BaseScreen {
     @Override
     public void dispose() {
         abcController.dispose();
+        stageFondo.dispose();
+        stageCargando.dispose();
     }
 
     @Override
@@ -226,7 +229,7 @@ public class GameScreen extends BaseScreen {
                 abcController.setLetraListFromJson(parametros.getJSONArray("letras"));
                 //enviar mensaje al oponente que ok
                 break;
-            case "dd":
+            case Constants.TOUCHED_RES:
                 break;
         }
        }catch (Exception ex)
@@ -234,5 +237,103 @@ public class GameScreen extends BaseScreen {
 
        }
     }
+
+
+
+
+    public  String toString(int letra)
+    {
+        switch (letra)
+        {
+            case 0:
+                return "A";
+            case 1:
+                return "B";
+            case 2:
+                return "C";
+            case 3:
+                return "D";
+            case 4:
+                return "E";
+            case 5:
+                return "F";
+            case 6:
+                return "G";
+            case 7:
+                return "H";
+            case 8:
+                return "I";
+            case 9:
+                return "J";
+            case 10:
+                return "K";
+            case 11:
+                return "L";
+            case 12:
+                return "M";
+            case 13:
+                return "N";
+            case 14:
+                return "Ñ";
+            case 15:
+                return "O";
+            case 16:
+                return "P";
+            case 17:
+                return "Q";
+            case 18:
+                return "R";
+            case 19:
+                return "S";
+            case 20:
+                return "T";
+            case 21:
+                return "U";
+            case 22:
+                return "V";
+            case 23:
+                return "W";
+            case 24:
+                return "X";
+            case 25:
+                return "Y";
+            case 26:
+                return "Z";
+        }
+        return "A";
+    }
+    public  HashMap<String,String> OBTENER_ABECEDARIO()
+    {
+        HashMap<String,String> abecedario=new HashMap<String,String>();
+        abecedario.put("A","abc/A.png");
+        abecedario.put("B","abc/B.png");
+        abecedario.put("C","abc/C.png");
+        abecedario.put("D","abc/D.png");
+        abecedario.put("E","abc/E.png");
+        abecedario.put("F","abc/F.png");
+        abecedario.put("G","abc/G.png");
+        abecedario.put("H","abc/H.png");
+        abecedario.put("I","abc/I.png");
+        abecedario.put("J","abc/J.png");
+        abecedario.put("K","abc/K.png");
+        abecedario.put("L","abc/L.png");
+        abecedario.put("M","abc/M.png");
+        abecedario.put("N","abc/N.png");
+        abecedario.put("Ñ","abc/Ñ.png");
+        abecedario.put("O","abc/O.png");
+        abecedario.put("P","abc/P.png");
+        abecedario.put("Q","abc/Q.png");
+        abecedario.put("R","abc/R.png");
+        abecedario.put("S","abc/S.png");
+        abecedario.put("T","abc/T.png");
+        abecedario.put("U","abc/U.png");
+        abecedario.put("V","abc/V.png");
+        abecedario.put("W","abc/W.png");
+        abecedario.put("X","abc/X.png");
+        abecedario.put("Y","abc/Y.png");
+        abecedario.put("Z","abc/Z.png");
+        return abecedario;
+    }
+
 
 }

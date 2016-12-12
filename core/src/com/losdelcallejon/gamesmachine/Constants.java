@@ -9,13 +9,14 @@ import java.util.HashMap;
 public class Constants {
     //// CONSTANTES DE LA CONEXION SOCKET
     public static final String SOCKET_URL="http://abcsocket.cf";
-    public static final String SOCKET_URL_Local="http://192.168.1.12:3000";
+    public static final String SOCKET_URL_Local="http://192.168.1.3:3000";
     public static final String GET_USER_EVENT="getUser";
 
     public static final String EJEMPLO_EVENTO="ESTO_ES_UN_EJEMPLO";
     public static final String GET_NEXT_PALABRA="getNextWord";
     public static final String IDENTIFY_RES="identifyRes";
-    
+
+
     public static final String UPDATE_OPONENTE="updateOponente";
     public static final String LETRA_PULSADA ="A" ;
     public static final String RENDERIZAR_LETRAS_POSICIONES="playGame";
@@ -30,7 +31,8 @@ public class Constants {
     public static final String BUSCANDO_OPONENTE="Buscando Oponente";
     public static final String REQUEST_PLAY_RES="requestPlayRes";
     public static final String RENDERIZAR_LETRAS_RES="playGameRes";
-
+    public static final String TOUCHED="touched";
+    public static final String TOUCHED_RES="touchedRes";
     //Otros
     public static final int PIXELS_IN_METER=225;
     public static final String ENVIAR_PALABRA = "DFD";
@@ -138,7 +140,7 @@ public class Constants {
         ArrayList<String> words=new ArrayList<String>();
         words.add("AAA");
         words.add("DDD");
-        words.add("MMM");
+        words.add("MMMM");
         return  words;
     }
 }

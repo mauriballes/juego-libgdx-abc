@@ -98,7 +98,7 @@ public class OptionGameScreen extends BaseScreen{
         if(goToGame)
         {
             gameScreen=new GameScreen(game,Constants.EJEMPLO_NIVEL,true,esCreador,Constants.DummyFactoryWords(),actionResolver,nombreRival,idPartida);
-            gameScreen.init();
+            //gameScreen.init();
             game.setScreen(gameScreen);
         }
         if(!buscando)
