@@ -110,7 +110,7 @@ public class OptionGameScreen extends BaseScreen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if(goToGame)
         {
-            gameScreen=new GameScreen(game,unidad,true,esCreador,listPalabras,actionResolver,nombreRival,idPartida,sexo);
+            gameScreen=new GameScreen(game,unidad,esMultijugador,esCreador,listPalabras,actionResolver,nombreRival,idPartida,sexo);
             //gameScreen.init();
             game.setScreen(gameScreen);
         }

@@ -81,7 +81,7 @@ public class GameScreen extends BaseScreen {
 
         if(palabras.size()==0)
         {
-            OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver,sexo);
+            MenuScreen menuScreen=new MenuScreen(game,sexo,actionResolver);
             game.setScreen(menuScreen);
         }else{
 
@@ -161,7 +161,7 @@ public class GameScreen extends BaseScreen {
                 }else if(abcController.getPalabra().equals("-1"))
                 {
                     bgMusic.stop();
-                    OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver,sexo);
+                    MenuScreen menuScreen=new MenuScreen(game,sexo,actionResolver);
                     game.setScreen(menuScreen);
                 }
               //abcController.prueba();
@@ -205,7 +205,7 @@ public class GameScreen extends BaseScreen {
                 actionResolver.showToast(finalizo,3000);
                 finalizo="-1";
                 misPalabrasTerminadas=0;
-                OptionGameScreen menuScreen=new OptionGameScreen(game,true,Constants.EJEMPLO_NIVEL,actionResolver);
+                MenuScreen menuScreen=new MenuScreen(game,sexo,actionResolver);
                 game.setScreen(menuScreen);
             }else if(misPalabrasTerminadas>0)
             {
